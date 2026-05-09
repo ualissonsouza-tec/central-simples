@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<!-- ============================================================
+     CENTRAL SIMPLES — Login / Cadastro
+     Tela de acesso com abas: Entrar e Criar conta.
+     Funcionalidades: toggle de senha, modal esqueci senha,
+     prevenção de autopreenchimento do browser.
+     ============================================================ -->
+
+<head>
+  <!-- ── Meta, PWA e título ────────────────────────────────────────────────── -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#2563eb" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Central Simples" />
+  <link rel="manifest" href="/manifest.json" />
+  <title>Central Simples — Acesso</title>
+
+  <!-- ── Fontes ────────────────────────────────────────────────────────────── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- ── Estilos ───────────────────────────────────────────────────────────── -->
+  <style>
+    /* ==========================================================================
+       LOGIN - CSS LOCAL
+       1. Base visual e painel da marca
+       2. Formularios de login/cadastro
+       3. Recuperacao de senha
+       4. Animacao mobile da marca
+       ========================================================================== */
+
+    /* ── Reset e variáveis globais ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:    #0d1b2a;
+      --navy-2:  #142338;
+      --blue:    #2563eb;
+      --blue-lt: #3b82f6;
+      --sky:     #7dd3fc;
+      --gold:    #c9a84c;
+      --gold-lt: #e8c96d;
+      --text:    #e2e8f0;
+      --muted:   #94a3b8;
+      --error:   #fca5a5;
+      --success: #86efac;
+      --radius:  10px;
+      --wapp:    #25d366;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--navy);
+      color: var(--text);
+    }
+/* ===== NOVA LOGO 3D ===== */
+
+.logo-3d {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #2563eb, #06b6d4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 10px 25px rgba(0,0,0,0.4),
+    inset 0 2px 6px rgba(255,255,255,0.3);
+  animation: floatLogo 3s ease-in-out infinite;
+  transition: transform 0.3s ease;
+}
+
+.logo-3d:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.eye {
+  width: 22px;
+  height: 22px;
+  border: 3px solid white;
+  border-radius: 50%;
+  position: relative;
+}
+
+.eye::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  animation: blink 4s infinite;
+}
+
+/* animação flutuando */
+@keyframes floatLogo {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0px); }
+}
+
+/* piscar */
+@keyframes blink {
+  0%, 90%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+    /* ── Layout: 2 colunas (marca + formulário) ────────────────────────────── */
+    .layout { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; }
+
+    /* ── Coluna esquerda — Marca ───────────────────────────────────────────── */
+    .brand {
+      background: var(--navy-2);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 3.5rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Grade de quadrados decorativa */
+    .brand::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(37,99,235,.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(37,99,235,.07) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    /* Círculo de luz no canto superior */
+    .brand::after {
+      content: '';
+      position: absolute;
+      top: -120px; left: -120px;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(37,99,235,.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Logo */
+    .brand-logo { display: flex; align-items: center; gap: 14px; position: relative; z-index: 1; }
+
+    .brand-icon {
+      width: 48px; height: 48px;
+      background: var(--blue);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .brand-icon svg { width: 26px; height: 26px; color: #fff; }
+
+    .brand-name { font-family: 'DM Serif Display', serif; font-size: 1.6rem; color: #fff; letter-spacing: -.5px; }
+    .brand-name span {
+      display: block;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .75rem; font-weight: 500;
+      color: var(--sky); letter-spacing: .12em; text-transform: uppercase;
+    }
+
+    /* Corpo da marca */
+    .brand-body { position: relative; z-index: 1; }
+
+    .brand-headline {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.8rem; line-height: 1.15;
+      color: #fff; margin-bottom: 1.25rem;
+    }
+    .brand-headline em { color: var(--gold); font-style: italic; }
+
+    .brand-sub { font-size: .95rem; color: var(--muted); line-height: 1.65; max-width: 360px; }
+
+    .brand-features { display: flex; flex-direction: column; gap: 10px; margin-top: 2rem; }
+
+    .feature-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(37,99,235,.12); border: 1px solid rgba(37,99,235,.25);
+      border-radius: 100px; padding: 6px 14px;
+      font-size: .82rem; color: var(--sky); width: fit-content;
+    }
+    .feature-pill::before {
+      content: ''; width: 6px; height: 6px;
+      border-radius: 50%; background: var(--blue-lt);
+    }
+
+    .brand-footer { font-size: .72rem; color: var(--muted); opacity: .6; position: relative; z-index: 1; }
+
+    .mobile-brand-showcase {
+      display: none;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Coluna direita — Formulários ──────────────────────────────────────── */
+    .form-side { display: flex; align-items: center; justify-content: center; padding: 3rem 2rem; }
+    .form-box  { width: 100%; max-width: 400px; }
+
+    /* Abas: Entrar / Criar conta */
+    .tabs {
+      display: flex; gap: 2px; margin-bottom: 2rem;
+      background: var(--navy-2); border-radius: var(--radius); padding: 4px;
+    }
+    .tab-btn {
+      flex: 1; padding: 9px; border-radius: 7px; border: none;
+      background: transparent; color: var(--muted);
+      font-family: 'DM Sans', sans-serif; font-size: .875rem; font-weight: 500;
+      cursor: pointer; transition: background .15s, color .15s;
+    }
+    .tab-btn.active { background: var(--navy-3, #1a2f4a); color: #fff; }
+
+    /* Painéis das abas */
+    .form-panel        { display: none; animation: fadeUp .3s ease both; }
+    .form-panel.active { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-title { font-family: 'DM Serif Display', serif; font-size: 1.75rem; color: #fff; margin-bottom: .3rem; }
+    .form-sub   { font-size: .875rem; color: var(--muted); margin-bottom: 1.75rem; }
+
+    /* ── Campos de formulário ──────────────────────────────────────────────── */
+    .field           { margin-bottom: 1.1rem; }
+    .field label     { display: block; font-size: .75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: .4rem; }
+    .field-wrap      { position: relative; }
+
+    .field-wrap .icon-left {
+      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      width: 16px; height: 16px; color: var(--muted); pointer-events: none;
+    }
+    .field-wrap .icon-right {
+      position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+      width: 18px; height: 18px; color: var(--muted);
+      cursor: pointer; background: none; border: none; padding: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: color .15s;
+    }
+    .field-wrap .icon-right:hover { color: var(--sky); }
+
+    .field input {
+      width: 100%;
+      background: var(--navy-2);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: var(--radius);
+      padding: 12px 42px;
+      font-family: 'DM Sans', sans-serif; font-size: .92rem;
+      color: var(--text); outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .field input.no-icon-left  { padding-left: 14px; }
+    .field input.no-icon-right { padding-right: 14px; }
+    .field input::placeholder  { color: rgba(148,163,184,.4); }
+    .field input:focus         { border-color: var(--blue-lt); box-shadow: 0 0 0 3px rgba(59,130,246,.18); }
+
+    /* ── Links auxiliares ──────────────────────────────────────────────────── */
+    .link-btn {
+      background: none; border: none; color: var(--sky);
+      font-size: .83rem; cursor: pointer; padding: 0;
+      font-family: 'DM Sans', sans-serif;
+      text-decoration: underline; text-underline-offset: 2px;
+    }
+    .link-btn:hover { color: var(--blue-lt); }
+
+    .privacy-accept {
+      display: flex;
+      align-items: flex-start;
+      gap: .65rem;
+      margin: -.2rem 0 1.1rem;
+      color: var(--muted);
+      font-size: .82rem;
+      line-height: 1.45;
+    }
+    .privacy-accept input {
+      width: 16px;
+      height: 16px;
+      margin-top: .12rem;
+      accent-color: var(--blue-lt);
+      flex: 0 0 auto;
+    }
+    .privacy-accept a {
+      color: var(--sky);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .privacy-accept a:hover { color: var(--blue-lt); }
+
+    .row-between {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+
+    /* ── Botão de submit ───────────────────────────────────────────────────── */
+    .btn-submit {
+      width: 100%; background: var(--blue); color: #fff;
+      border: none; border-radius: var(--radius); padding: 13px;
+      font-family: 'DM Sans', sans-serif; font-size: .95rem; font-weight: 600;
+      cursor: pointer; transition: background .2s, transform .1s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-top: .25rem;
+    }
+    .btn-submit:hover:not(:disabled) { background: #1d4ed8; }
+    .btn-submit:active                { transform: scale(.98); }
+    .btn-submit:disabled              { opacity: .55; cursor: not-allowed; }
+
+    /* ── Spinner de carregamento ───────────────────────────────────────────── */
+    .spin {
+      display: none; width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,.3); border-top-color: #fff;
+      border-radius: 50%; animation: spin .6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Alertas de erro / sucesso ─────────────────────────────────────────── */
+    .alert {
+      border-radius: var(--radius); padding: 10px 14px;
+      font-size: .85rem; margin-bottom: 1rem; display: none;
+    }
+    .alert.show    { display: block; }
+    .alert.error   { background: rgba(220,38,38,.12);  border: 1px solid rgba(220,38,38,.3);  color: var(--error); }
+    .alert.success { background: rgba(134,239,172,.1); border: 1px solid rgba(134,239,172,.3); color: var(--success); }
+
+    /* ── Modal: Esqueci minha senha ────────────────────────────────────────── */
+    .modal-bg {
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(0,0,0,.6); backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-bg.open { display: flex; }
+
+    .modal-box {
+      background: var(--navy-2); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 14px; padding: 2rem; width: 100%; max-width: 380px;
+    }
+    .modal-box h3 { font-family: 'DM Serif Display', serif; font-size: 1.35rem; color: #fff; margin-bottom: .5rem; }
+    .modal-box p  { font-size: .875rem; color: var(--muted); margin-bottom: 1.5rem; }
+
+    .modal-close-btn {
+      width: 100%; background: transparent; border: 1px solid rgba(255,255,255,.12);
+      border-radius: 8px; padding: 10px; color: var(--muted);
+      font-family: 'DM Sans', sans-serif; font-size: .875rem; cursor: pointer; margin-top: .75rem;
+    }
+    .modal-close-btn:hover { background: rgba(255,255,255,.05); color: var(--text); }
+
+    /* ── Hint de plano ─────────────────────────────────────────────────────── */
+    .plan-hint {
+      margin-top: 1.5rem;
+      background: rgba(201,168,76,.07); border: 1px solid rgba(201,168,76,.2);
+      border-radius: var(--radius); padding: 10px 14px;
+      font-size: .78rem; color: var(--gold-lt); line-height: 1.55;
+    }
+    .plan-hint strong { color: var(--gold); }
+
+    /* ── Responsivo — oculta a coluna de marca em telas pequenas ──────────── */
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+
+      .brand {
+        min-height: auto;
+        gap: 2rem;
+        padding: 1.75rem 1.5rem;
+      }
+
+      .brand-headline {
+        font-size: 2.2rem;
+      }
+
+      .brand-sub {
+        max-width: none;
+      }
+
+      .form-side {
+        padding: 0 1rem 1.5rem;
+      }
+
+      .form-box {
+        max-width: none;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .brand {
+        min-height: clamp(340px, 46vh, 430px);
+        padding: 0;
+        gap: 0;
+        justify-content: center;
+      }
+
+      .brand > .brand-logo,
+      .brand > .brand-body,
+      .brand > .brand-footer {
+        display: none;
+      }
+
+      .mobile-brand-showcase {
+        display: block;
+        min-height: clamp(340px, 46vh, 430px);
+        width: 100%;
+        padding: 0;
+        perspective: 1100px;
+      }
+
+      .mobile-brand-card {
+        position: relative;
+        width: 100%;
+        height: clamp(340px, 46vh, 430px);
+        transform-style: preserve-3d;
+        animation: mobileBrandFlip 8s ease-in-out infinite;
+      }
+
+      .mobile-brand-face {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1.25rem;
+        border: 1px solid rgba(125,211,252,.14);
+        border-radius: 0;
+        background:
+          radial-gradient(circle at top left, rgba(125,211,252,.12), transparent 34%),
+          radial-gradient(circle at bottom right, rgba(37,99,235,.14), transparent 40%),
+          rgba(13,27,42,.32);
+        box-shadow: inset 0 -1px 0 rgba(255,255,255,.06);
+        backdrop-filter: blur(4px);
+        text-align: center;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+      }
+
+      .mobile-brand-face.back {
+        transform: rotateY(180deg);
+      }
+
+      .mobile-brand-main {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: .85rem;
+      }
+
+      .mobile-brand-face .logo-3d {
+        width: 66px;
+        height: 66px;
+        border-radius: 22px;
+        flex: 0 0 auto;
+      }
+
+      .mobile-brand-face .eye {
+        width: 29px;
+        height: 29px;
+        border-width: 3px;
+      }
+
+      .mobile-brand-face .eye::after {
+        width: 9px;
+        height: 9px;
+        top: 7px;
+        left: 7px;
+      }
+
+      .mobile-brand-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: clamp(1.95rem, 10vw, 2.65rem);
+        line-height: .9;
+        color: #fff;
+        letter-spacing: -.06em;
+        text-align: left;
+      }
+
+      .mobile-brand-kicker {
+        margin-top: .65rem;
+        color: var(--sky);
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .18em;
+        text-transform: uppercase;
+      }
+
+      .mobile-brand-headline {
+        font-family: 'DM Serif Display', serif;
+        color: #fff;
+        font-size: clamp(1.45rem, 7.2vw, 2.05rem);
+        line-height: 1.05;
+        letter-spacing: -.04em;
+        margin-bottom: .95rem;
+      }
+
+      .mobile-brand-headline em {
+        color: var(--gold-lt);
+        font-style: italic;
+      }
+
+      .mobile-brand-feature-list {
+        display: grid;
+        gap: .5rem;
+        width: 100%;
+      }
+
+      .mobile-brand-feature-list .feature-pill {
+        width: 100%;
+        justify-content: center;
+        padding: 7px 10px;
+        font-size: .75rem;
+        line-height: 1.25;
+      }
+
+      @keyframes mobileBrandFlip {
+        0%, 42% { transform: rotateY(0deg); }
+        50%, 92% { transform: rotateY(180deg); }
+        100% { transform: rotateY(360deg); }
+      }
+
+      .form-side {
+        padding: .75rem 1rem 1.5rem;
+      }
+
+      .tabs {
+        margin-top: 0;
+        margin-bottom: 1.25rem;
+      }
+
+      .brand-logo {
+        gap: 12px;
+      }
+
+      .brand-name {
+        font-size: 1.35rem;
+      }
+
+      .brand-headline {
+        font-size: 1.52rem;
+        line-height: 1.15;
+        margin-bottom: 0;
+      }
+
+      .brand-sub {
+        display: none;
+      }
+
+      .brand-features {
+        flex-direction: column;
+        gap: 8px;
+        margin-top: .85rem;
+      }
+
+      .feature-pill {
+        width: 100%;
+        padding: 8px 12px;
+        font-size: .78rem;
+        white-space: normal;
+      }
+
+      .brand-footer {
+        display: none;
+      }
+
+      .row-between {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: .75rem;
+      }
+
+      .modal-box {
+        padding: 1.5rem 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<!-- =========================================================================
+     LOGIN - HTML
+     1. Vitrine da marca
+     2. Abas entrar/criar conta
+     3. Formularios e modal de recuperacao
+     ========================================================================= -->
+<div class="layout">
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       COLUNA ESQUERDA — MARCA
+       ════════════════════════════════════════════════════════════════════════ -->
+  <aside class="brand">
+
+    <div class="mobile-brand-showcase" aria-hidden="true">
+      <div class="mobile-brand-card">
+        <div class="mobile-brand-face front">
+          <div class="mobile-brand-main">
+            <div class="logo-3d">
+              <div class="eye"></div>
+            </div>
+            <div class="mobile-brand-title">Central<br>Simples</div>
+          </div>
+          <div class="mobile-brand-kicker">Gestão para autônomos</div>
+        </div>
+
+        <div class="mobile-brand-face back">
+          <h1 class="mobile-brand-headline">Gestão que <em>realmente</em><br>cabe na sua rotina.</h1>
+          <div class="mobile-brand-feature-list">
+            <span class="feature-pill">Orçamentos em PDF com sua logo</span>
+            <span class="feature-pill">Cobrança automática pelo WhatsApp</span>
+            <span class="feature-pill">Painel de recebíveis em tempo real</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logo da marca -->
+    
+    <div class="brand-logo">
+      <div class="logo-3d">
+        <div class="eye"></div>
+      </div>
+    
+      <div class="brand-name">
+        Central Simples
+        <span>Gestão para autônomos</span>
+      </div>
+    </div>
+
+    <!-- Texto e benefícios -->
+    <div class="brand-body">
+      <h1 class="brand-headline">Gestão que <em>realmente</em><br/>cabe na sua rotina.</h1>
+      <p class="brand-sub">Clientes, orçamentos e cobranças num único painel. Envie mensagens profissionais pelo WhatsApp com um clique.</p>
+      <div class="brand-features">
+        <span class="feature-pill">Orçamentos em PDF com sua logo</span>
+        <span class="feature-pill">Cobrança automática pelo WhatsApp</span>
+        <span class="feature-pill">Painel de recebíveis em tempo real</span>
+      </div>
+    </div>
+
+    <!-- Rodapé da marca -->
+    <p class="brand-footer">Central Simples v1.0 · Sistema Integrado de Gestão</p>
+
+  </aside><!-- /brand -->
+
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       COLUNA DIREITA — FORMULÁRIOS
+       ════════════════════════════════════════════════════════════════════════ -->
+  <main class="form-side">
+    <div class="form-box">
+
+      <!-- Abas de navegação: Entrar / Criar conta -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="mudarAba('login')">Entrar</button>
+        <button class="tab-btn"        onclick="mudarAba('cadastro')">Criar conta</button>
+      </div>
+
+
+      <!-- ── Painel: Login ────────────────────────────────────────────────── -->
+      <div class="form-panel active" id="painel-login">
+        <h2 class="form-title">Seja Bem-vindo</h2>
+        <p class="form-sub">Acesse sua conta para continuar.</p>
+
+        <div class="alert error" id="login-erro"></div>
+
+        <form id="form-login" novalidate autocomplete="off">
+
+          <!-- Campos honeypot: evitam autopreenchimento do browser -->
+          <input type="text"     name="fake_user" style="display:none;" tabindex="-1" aria-hidden="true" />
+          <input type="password" name="fake_pass" style="display:none;" tabindex="-1" aria-hidden="true" />
+
+          <!-- Campo: Usuário -->
+          <div class="field">
+            <label for="login-user">Usuário</label>
+            <div class="field-wrap">
+              <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              <input id="login-user" type="text" autocomplete="off"
+                placeholder="Seu usuário" class="no-icon-right" required />
+            </div>
+          </div>
+
+          <!-- Campo: Senha com botão de visualização -->
+          <div class="field">
+            <label for="login-pass">Senha</label>
+            <div class="field-wrap">
+              <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <input id="login-pass" type="password" autocomplete="new-password"
+                placeholder="••••••••" required />
+              <button type="button" class="icon-right" id="toggle-login-pass" title="Mostrar senha">
+                <svg id="eye-open-login" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <svg id="eye-off-login" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                  <line x1="1" y1="1" x2="23" y2="23"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Link: Esqueci minha senha -->
+          <div class="row-between">
+            <button type="button" class="link-btn"
+              onclick="document.getElementById('modal-esqueci').classList.add('open')">
+              Esqueci minha senha
+
+      </button>
+          </div>
+
+          <!-- Botão de submit -->
+          <button type="submit" class="btn-submit" id="btn-login">
+            <span id="btn-login-txt">Entrar no painel</span>
+            <span class="spin" id="btn-login-spin"></span>
+          </button>
+
+        </form>
+      </div><!-- /painel-login -->
+
+
+      <!-- ── Painel: Cadastro ─────────────────────────────────────────────── -->
+      <div class="form-panel" id="painel-cadastro">
+        <h2 class="form-title">Criar conta</h2>
+        <p class="form-sub">Crie sua conta gratuita para começar.</p>
+
+        <div class="alert error"   id="cad-erro"></div>
+        <div class="alert success" id="cad-ok"></div>
+
+        <form id="form-cadastro" novalidate autocomplete="off">
+
+          <!-- Campo: Usuário -->
+          <div class="field">
+            <label for="cad-user">Usuário *</label>
+            <div class="field-wrap">
+              <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              <input id="cad-user" type="text" autocomplete="off"
+                placeholder="nome.usuario (letras, números, . _ -)" class="no-icon-right" required />
+            </div>
+          </div>
+
+          <!-- Campo: E-mail -->
+          <div class="field">
+            <label for="cad-email">E-mail *</label>
+            <div class="field-wrap">
+              <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+              <input id="cad-email" type="email" autocomplete="off"
+                placeholder="seuemail@exemplo.com" class="no-icon-right" required />
+            </div>
+          </div>
+
+          <!-- Campo: CPF ou CNPJ -->
+          <div class="field">
+            <label for="cad-document">CPF ou CNPJ *</label>
+            <div class="field-wrap">
+              <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="16" rx="2"/>
+                <path d="M7 8h10"/>
+                <path d="M7 12h4"/>
+                <path d="M7 16h7"/>
+              </svg>
+              <input id="cad-document" type="text" inputmode="numeric" autocomplete="off"
+                maxlength="18" placeholder="CPF ou CNPJ" class="no-icon-right" required />
+            </div>
+          </div>
+
+          <!-- Campo: Senha com botão de visualização -->
+          <div class="field">
+            <label for="cad-pass">
+              Senha *
+              <span style="font-size:.7rem;color:var(--muted);font-weight:400;">(mín. 8 caracteres)</span>
+            </label>
+            <div class="field-wrap">
+              <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <input id="cad-pass" type="password" autocomplete="off"
+                placeholder="••••••••" required />
+              <button type="button" class="icon-right" id="toggle-cad-pass" title="Mostrar senha">
+                <svg id="eye-open-cad" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <svg id="eye-off-cad" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                  <line x1="1" y1="1" x2="23" y2="23"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Botão de submit -->
+          <label class="privacy-accept">
+            <input id="cad-privacy" type="checkbox" required />
+            <span>
+              Li e aceito a
+              <a href="/privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a>
+              da Central Simples.
+            </span>
+          </label>
+
+          <button type="submit" class="btn-submit" id="btn-cad">
+            <span id="btn-cad-txt">Criar minha conta</span>
+            <span class="spin" id="btn-cad-spin"></span>
+          </button>
+
+        </form>
+
+        <div class="plan-hint">
+          <strong>Plano gratuito:</strong> acesso básico às funcionalidades.
+          Planos pagos com recursos completos em breve.
+        </div>
+      </div><!-- /painel-cadastro -->
+
+    </div><!-- /form-box -->
+  </main><!-- /form-side -->
+
+</div><!-- /layout -->
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     MODAL — Esqueci minha senha
+     ════════════════════════════════════════════════════════════════════════ -->
+<div class="modal-bg" id="modal-esqueci">
+  <div class="modal-box">
+    <h3>Recuperar senha</h3>
+    <p>Informe seu e-mail de cadastro e você receberá instruções para redefinir sua senha.</p>
+
+    <div class="alert error"   id="esqueci-erro"></div>
+    <div class="alert success" id="esqueci-ok"></div>
+
+    <div class="field">
+      <label for="esqueci-email">E-mail</label>
+      <div class="field-wrap">
+        <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+        <input id="esqueci-email" type="email" placeholder="seuemail@exemplo.com" class="no-icon-right" />
+      </div>
+    </div>
+
+    <button class="btn-submit" id="btn-esqueci" onclick="enviarRecuperacao()" style="margin-top:.25rem;">
+      <span class="spin" id="btn-esqueci-spin"></span>
+      <span id="btn-esqueci-txt">Enviar instrucoes</span>
+    </button>
+    <button class="modal-close-btn"
+      onclick="document.getElementById('modal-esqueci').classList.remove('open')">
+      Cancelar
+    </button>
+  </div>
+</div><!-- /modal-esqueci -->
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     JAVASCRIPT
+     ════════════════════════════════════════════════════════════════════════ -->
+<script>
+  // ===========================================================================
+  // LOGIN - JS
+  // 1. Abas, senha visivel e feedback
+  // 2. Validacao CPF/CNPJ e identificador do aparelho
+  // 3. Login, cadastro e recuperacao de senha
+  // 4. Ajustes de autofill e PWA
+  // ===========================================================================
+
+  // ── 1. NAVEGAÇÃO ENTRE ABAS ───────────────────────────────────────────────
+  function mudarAba(aba) {
+    document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+      btn.classList.toggle('active', (i === 0 && aba === 'login') || (i === 1 && aba === 'cadastro'));
+    });
+    document.getElementById('painel-login').classList.toggle('active',    aba === 'login');
+    document.getElementById('painel-cadastro').classList.toggle('active', aba === 'cadastro');
+  }
+
+
+  // ── 2. TOGGLE DE VISIBILIDADE DA SENHA ───────────────────────────────────
+  function toggleSenha(inputId, eyeOpenId, eyeOffId) {
+    const input   = document.getElementById(inputId);
+    const eyeOpen = document.getElementById(eyeOpenId);
+    const eyeOff  = document.getElementById(eyeOffId);
+    const mostrar = input.type === 'password';
+
+    input.type           = mostrar ? 'text'  : 'password';
+    eyeOpen.style.display = mostrar ? 'none'  : '';
+    eyeOff.style.display  = mostrar ? ''      : 'none';
+  }
+
+  document.getElementById('toggle-login-pass').addEventListener('click', () =>
+    toggleSenha('login-pass', 'eye-open-login', 'eye-off-login')
+  );
+  document.getElementById('toggle-cad-pass').addEventListener('click', () =>
+    toggleSenha('cad-pass', 'eye-open-cad', 'eye-off-cad')
+  );
+
+
+  // ── 3. FUNÇÕES UTILITÁRIAS DE UI ──────────────────────────────────────────
+
+  /** Ativa/desativa o estado de carregamento de um botão */
+  function setLoading(btnTxtId, btnSpinId, btnId, ativo, textoNormal) {
+    document.getElementById(btnTxtId).textContent  = ativo ? 'Aguarde…' : textoNormal;
+    document.getElementById(btnSpinId).style.display = ativo ? 'block' : 'none';
+    document.getElementById(btnId).disabled         = ativo;
+  }
+
+  /** Exibe uma mensagem de alerta */
+  function showAlert(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+
+  /** Oculta um ou mais alertas */
+  function hideAlerts(...ids) {
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      el.classList.remove('show');
+      el.textContent = '';
+    });
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // 2. Validacao CPF/CNPJ e identificador do aparelho
+  // ---------------------------------------------------------------------------
+  function onlyDigits(value) {
+    return String(value || '').replace(/\D/g, '');
+  }
+
+  function hasRepeatedDigits(digits) {
+    return /^(\d)\1+$/.test(digits);
+  }
+
+  function isValidCpf(digits) {
+    if (digits.length !== 11 || hasRepeatedDigits(digits)) return false;
+
+    let sum = 0;
+    for (let i = 0; i < 9; i += 1) sum += Number(digits[i]) * (10 - i);
+    let check = (sum * 10) % 11;
+    if (check === 10) check = 0;
+    if (check !== Number(digits[9])) return false;
+
+    sum = 0;
+    for (let i = 0; i < 10; i += 1) sum += Number(digits[i]) * (11 - i);
+    check = (sum * 10) % 11;
+    if (check === 10) check = 0;
+
+    return check === Number(digits[10]);
+  }
+
+  function isValidCnpj(digits) {
+    if (digits.length !== 14 || hasRepeatedDigits(digits)) return false;
+
+    const firstWeights = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    const secondWeights = [6, ...firstWeights];
+    const firstSum = firstWeights.reduce((sum, weight, index) => sum + Number(digits[index]) * weight, 0);
+    const firstCheck = firstSum % 11 < 2 ? 0 : 11 - (firstSum % 11);
+    if (firstCheck !== Number(digits[12])) return false;
+
+    const secondSum = secondWeights.reduce((sum, weight, index) => sum + Number(digits[index]) * weight, 0);
+    const secondCheck = secondSum % 11 < 2 ? 0 : 11 - (secondSum % 11);
+    return secondCheck === Number(digits[13]);
+  }
+
+  function isValidCpfCnpj(value) {
+    const digits = onlyDigits(value);
+    if (digits.length === 11) return isValidCpf(digits);
+    if (digits.length === 14) return isValidCnpj(digits);
+    return false;
+  }
+
+  function formatCpfCnpj(value) {
+    const digits = onlyDigits(value).slice(0, 14);
+
+    if (digits.length <= 11) {
+      return digits
+        .replace(/(\d{3})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+    }
+
+    return digits
+      .replace(/^(\d{2})(\d)/, '$1.$2')
+      .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+      .replace(/\.(\d{3})(\d)/, '.$1/$2')
+      .replace(/(\d{4})(\d{1,2})$/, '$1-$2');
+  }
+
+  function getSignupDeviceId() {
+    const storageKey = 'cs_signup_device_id';
+
+    try {
+      let deviceId = localStorage.getItem(storageKey);
+      if (!deviceId) {
+        deviceId = window.crypto?.randomUUID
+          ? window.crypto.randomUUID()
+          : `${Date.now()}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
+        localStorage.setItem(storageKey, deviceId);
+      }
+      return deviceId;
+    } catch {
+      return '';
+    }
+  }
+
+  document.getElementById('cad-document').addEventListener('input', (event) => {
+    event.target.value = formatCpfCnpj(event.target.value);
+  });
+
+  // ---------------------------------------------------------------------------
+  // 3. Login, cadastro e recuperacao de senha
+  // ---------------------------------------------------------------------------
+  document.getElementById('form-login').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideAlerts('login-erro');
+
+    const username = document.getElementById('login-user').value.trim();
+    const password = document.getElementById('login-pass').value;
+
+    if (!username || !password) {
+      showAlert('login-erro', 'Preencha usuário e senha.');
+      return;
+    }
+
+    setLoading('btn-login-txt', 'btn-login-spin', 'btn-login', true, 'Entrar no painel');
+
+    try {
+      const res  = await fetch('/api/login', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ username, password }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        window.location.href = '/dashboard.html';
+      } else {
+        showAlert('login-erro', data.message || 'Usuário ou senha incorretos.');
+        document.getElementById('login-pass').value = '';
+        document.getElementById('login-pass').focus();
+      }
+    } catch {
+      showAlert('login-erro', 'Erro de conexão. Verifique se o servidor está rodando.');
+    } finally {
+      setLoading('btn-login-txt', 'btn-login-spin', 'btn-login', false, 'Entrar no painel');
+    }
+  });
+
+
+  document.getElementById('form-cadastro').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideAlerts('cad-erro', 'cad-ok');
+
+    const username = document.getElementById('cad-user').value.trim();
+    const email    = document.getElementById('cad-email').value.trim();
+    const documentNumber = document.getElementById('cad-document').value.trim();
+    const password = document.getElementById('cad-pass').value;
+    const privacyAccepted = document.getElementById('cad-privacy').checked;
+
+    if (!username || !email || !documentNumber || !password) {
+      showAlert('cad-erro', 'Preencha todos os campos.');
+      return;
+    }
+
+    if (!isValidCpfCnpj(documentNumber)) {
+      showAlert('cad-erro', 'CPF ou CNPJ invalido. Confira os numeros digitados.');
+      document.getElementById('cad-document').focus();
+      return;
+    }
+    if (!privacyAccepted) {
+      showAlert('cad-erro', 'Aceite a Politica de Privacidade para criar sua conta.');
+      document.getElementById('cad-privacy').focus();
+      return;
+    }
+
+    setLoading('btn-cad-txt', 'btn-cad-spin', 'btn-cad', true, 'Criar minha conta');
+
+    try {
+      const res  = await fetch('/api/register', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({
+          username,
+          email,
+          document: documentNumber,
+          password,
+          device_id: getSignupDeviceId(),
+          privacy_accepted: privacyAccepted,
+        }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        showAlert('cad-ok', 'Conta criada com sucesso! Faça login para continuar.');
+        document.getElementById('form-cadastro').reset();
+        setTimeout(() => mudarAba('login'), 2000);
+      } else {
+        showAlert('cad-erro', data.message || 'Erro ao criar conta.');
+      }
+    } catch {
+      showAlert('cad-erro', 'Erro de conexão.');
+    } finally {
+      setLoading('btn-cad-txt', 'btn-cad-spin', 'btn-cad', false, 'Criar minha conta');
+    }
+  });
+
+
+  // ── 6. RECUPERAÇÃO DE SENHA ───────────────────────────────────────────────
+  async function enviarRecuperacao() {
+    hideAlerts('esqueci-erro', 'esqueci-ok');
+    const email = document.getElementById('esqueci-email').value.trim();
+
+    if (!email) {
+      showAlert('esqueci-erro', 'Informe seu e-mail.');
+      return;
+    }
+
+    setLoading('btn-esqueci-txt', 'btn-esqueci-spin', 'btn-esqueci', true, 'Enviar instrucoes');
+
+    try {
+      const res = await fetch('/api/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        showAlert('esqueci-ok', data.message || 'Se este e-mail estiver cadastrado, você receberá as instruções em breve.');
+      } else {
+        showAlert('esqueci-erro', data.message || 'Não foi possível enviar a recuperação agora.');
+      }
+    } catch {
+      showAlert('esqueci-erro', 'Erro de conexao. Verifique se o servidor esta rodando.');
+    } finally {
+      setLoading('btn-esqueci-txt', 'btn-esqueci-spin', 'btn-esqueci', false, 'Enviar instrucoes');
+    }
+  }
+
+  // Fecha o modal clicando fora dele
+  document.getElementById('modal-esqueci').addEventListener('click', function (e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+
+
+  // ---------------------------------------------------------------------------
+  // 4. Ajustes de autofill e registro do PWA
+  // ---------------------------------------------------------------------------
+  // Impede que o browser restaure senhas salvas automaticamente
+  window.addEventListener('load', () => {
+    ['login-user', 'login-pass', 'cad-user', 'cad-email', 'cad-document', 'cad-pass'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+  });
+
+
+  // ── 8. REGISTRO DO SERVICE WORKER (PWA) ──────────────────────────────────
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
+
+</script>
+
+<script src="/cs-pwa.js"></script>
+</body>
+</html>

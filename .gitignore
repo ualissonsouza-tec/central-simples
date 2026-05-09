@@ -1,0 +1,35 @@
+# Dependencias
+node_modules/
+
+# Segredos e configuracoes locais
+.env
+.env.*
+!.env.example
+
+# Banco local SQLite
+*.db
+*.db-shm
+*.db-wal
+central_simples.db*
+
+# Uploads e arquivos privados enviados pelos usuarios
+uploads/
+public/uploads/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Cache, build e cobertura
+.cache/
+coverage/
+dist/
+build/
+
+# Sistema operacional e editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

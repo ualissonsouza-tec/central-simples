@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Política de Privacidade | Central Simples</title>
+  <style>
+    :root {
+      --ink: #102033;
+      --muted: #5d6b7e;
+      --blue: #2563eb;
+      --sky: #38bdf8;
+      --line: #dbe7f5;
+      --paper: #ffffff;
+      --soft: #f5f9ff;
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(56,189,248,.22), transparent 34rem),
+        linear-gradient(135deg, #f8fbff 0%, #eef6ff 48%, #ffffff 100%);
+      line-height: 1.65;
+    }
+
+    main {
+      width: min(980px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 42px 0 56px;
+    }
+
+    .card {
+      background: rgba(255,255,255,.9);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 24px 70px rgba(15, 45, 80, .12);
+      padding: clamp(24px, 4vw, 46px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .mark {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      color: #fff;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--blue), var(--sky));
+      box-shadow: 0 14px 34px rgba(37, 99, 235, .25);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      line-height: 1.08;
+    }
+
+    h2 {
+      margin: 2rem 0 .7rem;
+      font-size: 1.15rem;
+    }
+
+    p, li { color: var(--muted); }
+
+    ul { padding-left: 1.2rem; }
+
+    a { color: var(--blue); font-weight: 700; }
+
+    .lead {
+      max-width: 780px;
+      font-size: 1.04rem;
+    }
+
+    .notice {
+      margin: 24px 0;
+      padding: 16px 18px;
+      border-left: 5px solid var(--blue);
+      border-radius: 14px;
+      background: var(--soft);
+      color: var(--ink);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 999px;
+      color: #fff;
+      text-decoration: none;
+      background: var(--blue);
+      box-shadow: 0 14px 30px rgba(37, 99, 235, .2);
+    }
+
+    .button.secondary {
+      color: var(--blue);
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+
+    @media (max-width: 640px) {
+      main { width: min(100% - 20px, 980px); padding: 18px 0 34px; }
+      .card { padding: 22px; border-radius: 18px; }
+      .brand { align-items: flex-start; }
+      .mark { width: 42px; height: 42px; border-radius: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="card">
+      <div class="brand">
+        <div class="mark">CS</div>
+        <div>
+          <strong>Central Simples</strong>
+          <p style="margin:.1rem 0 0;">Gestão para autônomos</p>
+        </div>
+      </div>
+
+      <h1>Política de Privacidade</h1>
+      <p class="lead">
+        Esta política explica, de forma simples, como a Central Simples trata dados pessoais para permitir cadastro, login, criação de clientes, orçamentos, cobranças, notificações e automações operacionais.
+      </p>
+
+      <p><strong>Última atualização:</strong> 09/05/2026.</p>
+
+      <div class="notice">
+        Antes do lançamento oficial, os dados do responsável pelo sistema, canal de atendimento, fornecedores contratados e prazos finais de retenção devem ser revisados conforme a hospedagem, gateway de pagamento, e-mail e WhatsApp oficiais.
+      </div>
+
+      <h2>1. Quais dados podem ser tratados</h2>
+      <ul>
+        <li>Dados da conta: nome de usuário, e-mail, CPF ou CNPJ, senha protegida por hash, IP ou identificador técnico do aparelho para prevenção de abuso.</li>
+        <li>Dados profissionais: nome da empresa, logo, chave Pix, configurações de cobrança e preferências de uso.</li>
+        <li>Dados de clientes cadastrados pelo usuário: nome, WhatsApp, e-mail, CPF quando informado, endereço, observações, histórico, orçamentos e pagamentos.</li>
+        <li>Dados de operação: registros de login, notificações, envio de orçamento, aprovação ou recusa, recuperação de senha e eventos de automação.</li>
+      </ul>
+
+      <h2>2. Para quais finalidades usamos os dados</h2>
+      <ul>
+        <li>Criar e proteger a conta do usuário.</li>
+        <li>Gerar orçamentos em PDF, links de aprovação, cobranças e mensagens via WhatsApp.</li>
+        <li>Registrar histórico do cliente e facilitar a rotina comercial do autônomo.</li>
+        <li>Enviar recuperação de senha, avisos, notificações e lembretes operacionais.</li>
+        <li>Prevenir fraudes, uso indevido, múltiplos cadastros abusivos e acessos não autorizados.</li>
+      </ul>
+
+      <h2>3. Bases legais</h2>
+      <p>
+        O tratamento pode ocorrer para execução do serviço contratado ou solicitado, cumprimento de obrigações legais, legítimo interesse em segurança e prevenção de fraude, e consentimento quando a legislação exigir autorização específica.
+      </p>
+
+      <h2>4. Compartilhamento</h2>
+      <p>
+        Os dados podem ser compartilhados com fornecedores necessários para funcionamento do sistema, como hospedagem, banco de dados, envio de e-mail, WhatsApp/API de mensagens, notificações e gateway de pagamento. A Central Simples não deve vender dados pessoais.
+      </p>
+
+      <h2>5. Segurança</h2>
+      <p>
+        O sistema aplica controles como autenticação, cookies HTTP-only, validação de origem nas requisições sensíveis, hash de senha, limites contra abuso, tokens de recuperação de senha com expiração e restrição de acesso às telas internas.
+      </p>
+
+      <h2>6. Direitos dos titulares</h2>
+      <p>
+        O titular pode solicitar confirmação de tratamento, acesso, correção, eliminação ou anonimização de dados, informação sobre compartilhamento e revogação de consentimento quando aplicável. As solicitações devem ser feitas pelo canal de suporte informado pelo responsável pelo sistema.
+      </p>
+
+      <h2>7. Retenção e exclusão</h2>
+      <p>
+        Os dados são mantidos pelo tempo necessário para prestar o serviço, cumprir obrigações legais, proteger direitos e manter registros de segurança. Antes da produção, será definida uma política operacional de backup, retenção e exclusão definitiva.
+      </p>
+
+      <h2>8. Responsabilidade do usuário</h2>
+      <p>
+        O usuário que cadastra dados de seus próprios clientes deve informar esses clientes sobre o uso do sistema para orçamento, cobrança, contato profissional e histórico comercial, respeitando finalidade, necessidade e transparência.
+      </p>
+
+      <div class="actions">
+        <a class="button" href="/login.html">Voltar ao login</a>
+        <a class="button secondary" href="/">Ir para o painel</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

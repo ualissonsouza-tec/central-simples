@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#2563eb" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Central Simples" />
+  <link rel="manifest" href="/manifest.json" />
+  <title>Central Simples - Pagamento</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/cs-shared.css" />
+  <style>
+    /* ==========================================================================
+       PAGAMENTO - CSS LOCAL
+       1. Layout do checkout
+       2. Resumo do plano
+       3. Formas de pagamento e dados do pagador
+       4. Mobile
+       ========================================================================== */
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(37,99,235,.25), transparent 34%),
+        radial-gradient(circle at 90% 100%, rgba(37,211,102,.13), transparent 28%),
+        var(--navy);
+    }
+
+    .checkout-shell {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 34px 0 46px;
+    }
+
+    .checkout-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 26px;
+    }
+
+    .checkout-logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .checkout-logo .brand-name {
+      font-size: 1.55rem;
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: .7rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .checkout-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .95fr) minmax(0, 1.25fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .summary-card,
+    .form-card,
+    .result-card {
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at top right, rgba(125,211,252,.08), transparent 30%),
+        rgba(20,35,56,.92);
+      box-shadow: 0 24px 70px rgba(0,0,0,.28);
+      overflow: hidden;
+    }
+
+    .card-head {
+      padding: 22px 24px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    .card-head small {
+      display: block;
+      margin-bottom: .4rem;
+      color: var(--sky);
+      font-size: .72rem;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .card-head h1,
+    .card-head h2 {
+      color: #fff;
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.85rem);
+      line-height: 1;
+      letter-spacing: -.04em;
+    }
+
+    .card-body {
+      padding: 22px 24px 24px;
+    }
+
+    .plan-price {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin: .7rem 0 1rem;
+      color: #fff;
+      font-family: 'DM Serif Display', serif;
+      font-size: 3rem;
+      letter-spacing: -.05em;
+    }
+
+    .plan-price span {
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .9rem;
+      letter-spacing: 0;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: .75rem;
+      margin-top: 1rem;
+      color: var(--text);
+      font-size: .9rem;
+    }
+
+    .summary-list li {
+      list-style: none;
+      display: flex;
+      gap: .55rem;
+    }
+
+    .summary-list li::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      margin-top: .42rem;
+      border-radius: 50%;
+      background: var(--wapp);
+      box-shadow: 0 0 0 4px rgba(37,211,102,.1);
+      flex: 0 0 auto;
+    }
+
+    .gateway-note {
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(251,191,36,.24);
+      background: rgba(251,191,36,.09);
+      color: #fde68a;
+      font-size: .88rem;
+      line-height: 1.55;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      color: var(--text);
+      font-size: .8rem;
+      font-weight: 800;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      border: 1px solid var(--border-2);
+      border-radius: 12px;
+      background: rgba(10,21,32,.86);
+      color: var(--text);
+      padding: 12px 13px;
+      font: 500 .92rem 'DM Sans', sans-serif;
+      outline: none;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--sky);
+      box-shadow: 0 0 0 3px rgba(125,211,252,.12);
+    }
+
+    .method-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .method-option {
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 16px;
+      padding: 12px;
+      background: rgba(255,255,255,.045);
+      color: var(--muted);
+      font-size: .85rem;
+      font-weight: 800;
+      text-align: center;
+      transition: .18s ease;
+    }
+
+    .method-option input {
+      display: none;
+    }
+
+    .method-option:has(input:checked) {
+      border-color: rgba(125,211,252,.55);
+      color: #fff;
+      background: rgba(37,99,235,.2);
+    }
+
+    .card-fields {
+      display: none;
+      margin-top: 14px;
+    }
+
+    .card-fields.show {
+      display: grid;
+    }
+
+    .action-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .result-card {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .result-card.show {
+      display: block;
+    }
+
+    .result-card .card-body {
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(20,35,56,.96);
+      border: 1px solid var(--border-2);
+      box-shadow: 0 18px 50px rgba(0,0,0,.3);
+      z-index: 90;
+    }
+
+    .toast.show {
+      display: flex;
+    }
+
+    @media (max-width: 920px) {
+      .checkout-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .checkout-shell {
+        width: min(100% - 24px, 1120px);
+        padding-top: 18px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .checkout-topbar {
+        align-items: center;
+        display: contents;
+      }
+
+      .checkout-logo {
+        order: 1;
+        gap: 9px;
+        min-width: 0;
+        margin-bottom: 18px;
+      }
+
+      .checkout-logo .logo-3d {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+      }
+
+      .checkout-logo .eye {
+        width: 18px;
+        height: 18px;
+        border-width: 2px;
+      }
+
+      .checkout-logo .eye::after {
+        width: 5px;
+        height: 5px;
+        top: 5px;
+        left: 5px;
+      }
+
+      .checkout-logo .brand-name {
+        font-size: 1.18rem;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      .checkout-logo .brand-name span {
+        font-size: .52rem;
+        letter-spacing: .08em;
+        white-space: nowrap;
+      }
+
+      .topbar-actions,
+      .action-row {
+        width: 100%;
+      }
+
+      .checkout-grid {
+        order: 2;
+      }
+
+      .topbar-actions {
+        order: 3;
+        margin-top: 18px;
+        padding-top: 14px;
+        border-top: 1px solid rgba(255,255,255,.1);
+      }
+
+      .topbar-actions .btn,
+      .action-row .btn {
+        flex: 1;
+        justify-content: center;
+      }
+
+      .form-grid,
+      .method-row {
+        grid-template-columns: 1fr;
+      }
+
+      .card-head,
+      .card-body {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- =========================================================================
+       PAGAMENTO - HTML
+       1. Topbar
+       2. Resumo do plano escolhido
+       3. Formulario de pagamento
+       ========================================================================= -->
+  <main class="checkout-shell">
+    <div class="checkout-topbar">
+      <a class="checkout-logo" href="/dashboard.html">
+        <div class="logo-3d"><div class="eye"></div></div>
+        <div class="brand-name">Central Simples<span>Gestão para autônomos</span></div>
+      </a>
+      <div class="topbar-actions">
+        <a class="btn btn-ghost" href="/planos.html">Ver planos</a>
+        <button class="btn btn-ghost" id="btn-sair" type="button">Sair</button>
+      </div>
+    </div>
+
+    <section class="checkout-grid">
+      <aside class="summary-card">
+        <div class="card-head">
+          <small>Resumo do plano</small>
+          <h1 id="plan-name">Carregando...</h1>
+        </div>
+        <div class="card-body">
+          <div class="plan-price" id="plan-price">--<span>/mês</span></div>
+          <p id="plan-tagline" style="color:var(--muted);line-height:1.6;"></p>
+          <ul class="summary-list" id="plan-features"></ul>
+          <div class="gateway-note">
+            Nesta fase local, o sistema registra o pedido de pagamento e ativa o plano em modo de teste. No servidor oficial, vamos conectar sua conta bancária/gateway para confirmar pagamentos automaticamente.
+          </div>
+        </div>
+      </aside>
+
+      <section class="form-card">
+        <div class="card-head">
+          <small>Dados para cobrança</small>
+          <h2>Escolha a forma de pagamento.</h2>
+        </div>
+        <div class="card-body">
+          <div class="method-row">
+            <label class="method-option">
+              <input type="radio" name="payment-method" value="pix" checked onchange="atualizarMetodo()" />
+              Pix
+            </label>
+            <label class="method-option">
+              <input type="radio" name="payment-method" value="boleto" onchange="atualizarMetodo()" />
+              Boleto
+            </label>
+            <label class="method-option">
+              <input type="radio" name="payment-method" value="card" onchange="atualizarMetodo()" />
+              Cartão
+            </label>
+          </div>
+
+          <form id="checkout-form">
+            <div class="form-grid">
+              <div class="field full">
+                <label>Nome completo ou razão social</label>
+                <input id="payer-name" autocomplete="name" required placeholder="Ex: João Silva" />
+              </div>
+              <div class="field">
+                <label>CPF ou CNPJ</label>
+                <input id="payer-document" inputmode="numeric" required placeholder="Somente números" />
+              </div>
+              <div class="field">
+                <label>E-mail</label>
+                <input id="payer-email" type="email" autocomplete="email" required placeholder="voce@email.com" />
+              </div>
+              <div class="field">
+                <label>WhatsApp</label>
+                <input id="payer-whatsapp" inputmode="tel" placeholder="(00) 00000-0000" />
+              </div>
+              <div class="field">
+                <label>CEP</label>
+                <input id="payer-cep" inputmode="numeric" placeholder="00000-000" />
+              </div>
+              <div class="field full">
+                <label>Endereço</label>
+                <input id="payer-address" placeholder="Rua, número, bairro" />
+              </div>
+              <div class="field">
+                <label>Cidade</label>
+                <input id="payer-city" placeholder="Sua cidade" />
+              </div>
+              <div class="field">
+                <label>Estado</label>
+                <input id="payer-state" maxlength="2" placeholder="UF" />
+              </div>
+            </div>
+
+            <div class="form-grid card-fields" id="card-fields">
+              <div class="field full">
+                <label>Nome impresso no cartão</label>
+                <input id="card-name" autocomplete="cc-name" placeholder="Como aparece no cartão" />
+              </div>
+              <div class="field full">
+                <label>Número do cartão</label>
+                <input id="card-number" inputmode="numeric" autocomplete="cc-number" placeholder="0000 0000 0000 0000" />
+              </div>
+              <div class="field">
+                <label>Validade</label>
+                <input id="card-exp" autocomplete="cc-exp" placeholder="MM/AA" />
+              </div>
+              <div class="field">
+                <label>CVV</label>
+                <input id="card-cvv" inputmode="numeric" autocomplete="cc-csc" placeholder="123" />
+              </div>
+            </div>
+
+            <div class="action-row">
+              <a class="btn btn-ghost" href="/planos.html">Trocar plano</a>
+              <button class="btn btn-primary" id="submit-btn" type="submit">Continuar pagamento</button>
+            </div>
+          </form>
+
+          <article class="result-card" id="result-card">
+            <div class="card-head">
+              <small>Solicitação criada</small>
+              <h2 id="result-title">Plano registrado.</h2>
+            </div>
+            <div class="card-body">
+              <p id="result-message"></p>
+              <div class="action-row">
+                <a class="btn btn-primary" href="/dashboard.html">Ir para o painel</a>
+                <a class="btn btn-ghost" href="/planos.html">Ver planos</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"><span id="toast-msg"></span></div>
+
+  <script>
+    // =========================================================================
+    // PAGAMENTO - JS
+    // 1. Carrega plano selecionado
+    // 2. Alterna forma de pagamento
+    // 3. Envia checkout para o backend
+    // =========================================================================
+
+    let _selectedPlan = null;
+
+    function toast(message) {
+      const el = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = message;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 3200);
+    }
+
+    function selectedMethod() {
+      return document.querySelector('input[name="payment-method"]:checked')?.value || 'pix';
+    }
+
+    function atualizarMetodo() {
+      document.getElementById('card-fields').classList.toggle('show', selectedMethod() === 'card');
+      document.getElementById('submit-btn').textContent = selectedMethod() === 'pix'
+        ? 'Gerar pagamento Pix'
+        : selectedMethod() === 'boleto'
+          ? 'Gerar boleto'
+          : 'Continuar com cartão';
+    }
+
+    function onlyDigits(value) {
+      return String(value || '').replace(/\D/g, '');
+    }
+
+    function renderPlan(plan) {
+      document.getElementById('plan-name').textContent = plan.name;
+      document.getElementById('plan-price').innerHTML = `${plan.priceLabel}<span>/mês</span>`;
+      document.getElementById('plan-tagline').textContent = plan.tagline;
+      document.getElementById('plan-features').innerHTML = plan.features.map((item) => `<li>${item}</li>`).join('');
+    }
+
+    async function init() {
+      const params = new URLSearchParams(window.location.search);
+      const planId = params.get('plan') || 'professional';
+      const res = await fetch('/api/billing/plans', { credentials: 'same-origin' });
+      if (res.status === 401) {
+        window.location.replace('/login.html');
+        return;
+      }
+      const data = await res.json();
+      const plans = data.success ? data.data : [];
+      _selectedPlan = plans.find((plan) => plan.id === planId) || plans.find((plan) => plan.id === 'professional') || plans[0];
+      if (!_selectedPlan) {
+        window.location.replace('/planos.html');
+        return;
+      }
+      renderPlan(_selectedPlan);
+      atualizarMetodo();
+    }
+
+    document.getElementById('checkout-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!_selectedPlan) return;
+
+      const method = selectedMethod();
+      const cardNumber = onlyDigits(document.getElementById('card-number').value);
+      const payload = {
+        plan: _selectedPlan.id,
+        payment_method: method,
+        payer: {
+          name: document.getElementById('payer-name').value.trim(),
+          document: onlyDigits(document.getElementById('payer-document').value),
+          email: document.getElementById('payer-email').value.trim(),
+          whatsapp: document.getElementById('payer-whatsapp').value.trim(),
+          cep: document.getElementById('payer-cep').value.trim(),
+          address: document.getElementById('payer-address').value.trim(),
+          city: document.getElementById('payer-city').value.trim(),
+          state: document.getElementById('payer-state').value.trim(),
+          card_last4: method === 'card' ? cardNumber.slice(-4) : '',
+        },
+      };
+
+      if (!payload.payer.name || payload.payer.document.length < 11 || !payload.payer.email.includes('@')) {
+        toast('Preencha nome, CPF/CNPJ e e-mail corretamente.');
+        return;
+      }
+
+      if (method === 'card' && cardNumber.length < 13) {
+        toast('Informe um número de cartão válido para continuar.');
+        return;
+      }
+
+      const button = document.getElementById('submit-btn');
+      button.disabled = true;
+      button.textContent = 'Processando...';
+
+      try {
+        const res = await fetch('/api/billing/checkout', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (!data.success) {
+          toast(data.message || 'Não foi possível criar o pagamento.');
+          return;
+        }
+
+        document.getElementById('checkout-form').style.display = 'none';
+        document.getElementById('result-card').classList.add('show');
+        document.getElementById('result-title').textContent = data.payment?.localAutoApprove
+          ? 'Plano ativado em modo de teste.'
+          : 'Pagamento aguardando confirmação.';
+        document.getElementById('result-message').textContent = data.message;
+      } catch {
+        toast('Erro ao enviar os dados de pagamento.');
+      } finally {
+        button.disabled = false;
+        atualizarMetodo();
+      }
+    });
+
+    document.getElementById('btn-sair').addEventListener('click', async () => {
+      await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
+      window.location.href = '/login.html';
+    });
+
+    init().catch(() => toast('Não foi possível carregar o checkout.'));
+  </script>
+  <script src="/cs-pwa.js"></script>
+  <script src="/cs-billing.js"></script>
+</body>
+</html>

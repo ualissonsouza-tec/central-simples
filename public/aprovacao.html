@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Central Simples - Aprovação</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ==========================================================================
+       APROVAÇÃO PÚBLICA - CSS LOCAL
+       1. Layout público do cliente
+       2. Card do orçamento
+       3. Ações de aprovar/recusar
+       ========================================================================== */
+
+    :root {
+      --navy: #0d1b2a;
+      --navy-2: #142338;
+      --navy-3: #1a2f4a;
+      --blue: #2563eb;
+      --sky: #7dd3fc;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --border: rgba(255,255,255,.08);
+      --success: #4ade80;
+      --danger: #f87171;
+      --warn: #fbbf24;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      font-family: 'DM Sans', sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,.18), transparent 28%),
+        linear-gradient(180deg, #091421, #0d1b2a 45%, #09111b);
+      color: var(--text);
+      padding: 1.5rem;
+    }
+
+    .shell {
+      max-width: 960px;
+      margin: 0 auto;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .hero,
+    .card {
+      background: rgba(20,35,56,.92);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 22px 60px rgba(0,0,0,.3);
+    }
+
+    .hero {
+      padding: 1.4rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-mark {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, #2563eb, #06b6d4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #fff;
+      font-size: 1rem;
+      box-shadow: 0 10px 28px rgba(37,99,235,.25);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .brand-mark img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .brand h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.5rem;
+      color: #fff;
+      line-height: 1.05;
+    }
+
+    .brand p,
+    .hero p,
+    .card p {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: .75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      background: rgba(125,211,252,.1);
+      color: var(--sky);
+      border: 1px solid rgba(125,211,252,.18);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 1rem;
+    }
+
+    .card {
+      padding: 1.35rem 1.5rem;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding-bottom: .9rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-title h2 {
+      font-size: 1rem;
+      color: #fff;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: .8rem;
+    }
+
+    .meta-box,
+    .item-row,
+    .check-row {
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 14px;
+      padding: .95rem 1rem;
+    }
+
+    .meta-box small,
+    .item-row small {
+      display: block;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-size: .68rem;
+      color: var(--muted);
+      margin-bottom: .4rem;
+    }
+
+    .meta-box strong,
+    .item-row strong {
+      display: block;
+      color: #fff;
+      font-size: .95rem;
+    }
+
+    .item-list,
+    .check-list {
+      display: grid;
+      gap: .75rem;
+    }
+
+    .item-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: .8rem;
+      align-items: center;
+    }
+
+    .total-box {
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(37,99,235,.2), rgba(125,211,252,.08));
+      border: 1px solid rgba(125,211,252,.16);
+      padding: 1rem 1.1rem;
+    }
+
+    .total-box small {
+      display: block;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-size: .68rem;
+      margin-bottom: .35rem;
+    }
+
+    .total-box strong {
+      color: #fff;
+      font-size: 1.8rem;
+      font-family: 'DM Serif Display', serif;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--sky);
+      flex-shrink: 0;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.03);
+      padding: .95rem 1rem;
+      color: var(--text);
+      outline: none;
+      font-family: inherit;
+      font-size: .95rem;
+    }
+
+    input {
+      min-height: 48px;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: rgba(125,211,252,.35);
+      box-shadow: 0 0 0 3px rgba(125,211,252,.12);
+    }
+
+    .form-grid {
+      display: grid;
+      gap: .8rem;
+    }
+
+    .field-label {
+      display: block;
+      font-size: .76rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: .45rem;
+    }
+
+    .actions {
+      display: flex;
+      gap: .75rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      border-radius: 12px;
+      padding: .9rem 1.2rem;
+      font-weight: 700;
+      font-size: .92rem;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+    }
+
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-success { background: rgba(74,222,128,.14); color: var(--success); border: 1px solid rgba(74,222,128,.2); }
+    .btn-danger { background: rgba(248,113,113,.12); color: var(--danger); border: 1px solid rgba(248,113,113,.2); }
+    .btn-ghost { background: rgba(255,255,255,.05); color: var(--text); border: 1px solid rgba(255,255,255,.08); }
+
+    .state {
+      padding: 1rem 1.1rem;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.06);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+    }
+
+    .decision-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(4,10,20,.74);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 30;
+    }
+
+    .decision-modal-backdrop.is-open {
+      display: flex;
+    }
+
+    .decision-modal {
+      width: min(520px, 100%);
+      background: rgba(20,35,56,.98);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 22px;
+      box-shadow: 0 26px 80px rgba(0,0,0,.45);
+      padding: 1.4rem;
+      display: grid;
+      gap: .95rem;
+      text-align: center;
+    }
+
+    .decision-modal-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto;
+      font-size: 1.7rem;
+      font-weight: 700;
+    }
+
+    .decision-modal-icon.success {
+      background: rgba(74,222,128,.14);
+      color: var(--success);
+      border: 1px solid rgba(74,222,128,.24);
+    }
+
+    .decision-modal-icon.danger {
+      background: rgba(248,113,113,.12);
+      color: var(--warn);
+      border: 1px solid rgba(251,191,36,.22);
+    }
+
+    .decision-modal h3 {
+      font-family: 'DM Serif Display', serif;
+      color: #fff;
+      font-size: 1.65rem;
+      line-height: 1.1;
+    }
+
+    .decision-modal p {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    @media (max-width: 860px) {
+      body {
+        padding: .9rem;
+      }
+
+      .layout,
+      .meta-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .actions,
+      .actions .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- =========================================================================
+       APROVAÇÃO PÚBLICA - HTML
+       1. Resumo do orçamento
+       2. Itens e checklist
+       3. Decisão do cliente
+       ========================================================================= -->
+  <div class="shell">
+    <section class="hero">
+      <div class="brand">
+        <div class="brand-mark" id="brand-mark">
+          <span id="brand-initials">CS</span>
+          <img id="brand-logo" src="" alt="Logo da empresa" hidden />
+        </div>
+        <div>
+          <h1 id="company-name">Central Simples</h1>
+          <p>Link público para aprovação de orçamento.</p>
+        </div>
+      </div>
+      <div class="status" id="status-pill">Carregando</div>
+    </section>
+
+    <div class="layout">
+      <section class="card">
+        <div class="section-title">
+          <div>
+            <h2 id="orc-title">Carregando...</h2>
+            <p id="orc-description">Buscando dados do orçamento.</p>
+          </div>
+        </div>
+
+        <div class="meta-grid" id="meta-grid"></div>
+
+        <div>
+          <div class="section-title">
+            <div>
+              <h2>Itens</h2>
+              <p>Resumo do que está incluso.</p>
+            </div>
+          </div>
+          <div class="item-list" id="item-list"></div>
+        </div>
+
+        <div>
+          <div class="section-title">
+            <div>
+              <h2>Checklist do serviço</h2>
+              <p>Pontos importantes planejados para a entrega.</p>
+            </div>
+          </div>
+          <div class="check-list" id="check-list"></div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div>
+          <div class="section-title">
+            <div>
+              <h2>Ação do cliente</h2>
+              <p>Você pode aprovar, recusar ou baixar o PDF.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="total-box">
+          <small>Total</small>
+          <strong id="total-value">R$ 0,00</strong>
+        </div>
+
+        <div class="state" id="decision-state">
+          O sistema vai registrar sua resposta imediatamente.
+        </div>
+
+        <div>
+          <div class="form-grid">
+            <div>
+              <label class="field-label" for="visit-address">Endereço para a visita</label>
+              <textarea id="visit-address" placeholder="Informe o endereço completo onde o profissional deverá realizar a visita."></textarea>
+            </div>
+            <div>
+              <label class="field-label" for="preferred-visit-time">Melhor dia e horário</label>
+              <input id="preferred-visit-time" type="text" placeholder="Ex.: terça-feira pela manhã ou sábado às 9h" autocomplete="off" />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="field-label" for="client-note">Mensagem para a empresa</label>
+          <textarea id="client-note" placeholder="Se quiser, escreva um comentário, pedido de ajuste ou observação."></textarea>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-success" onclick="enviarDecisao('approve')">Aprovar agora</button>
+          <button class="btn btn-danger" onclick="enviarDecisao('reject')">Recusar</button>
+          <a class="btn btn-primary" id="pdf-link" href="#" target="_blank" rel="noopener">Abrir PDF</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="decision-modal-backdrop" id="decision-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="decision-modal-title">
+    <div class="decision-modal">
+      <div class="decision-modal-icon success" id="decision-modal-icon">✓</div>
+      <h3 id="decision-modal-title">Resposta registrada</h3>
+      <p id="decision-modal-message">Sua resposta foi enviada com sucesso.</p>
+      <div class="actions" style="justify-content:center;">
+        <button class="btn btn-primary" type="button" onclick="fecharModalDecisao()">Voltar ao orçamento</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // APROVAÇÃO PÚBLICA - JS
+    // 1. Carrega orçamento pelo token
+    // 2. Renderiza dados para o cliente
+    // 3. Envia aprovação ou recusa
+    // =========================================================================
+
+    let _orc = null;
+    let _token = null;
+
+    function brl(value) {
+      return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value) || 0);
+    }
+
+    function fmtDate(value) {
+      if (!value) return '--';
+      const iso = String(value).slice(0, 10);
+      const [year, month, day] = iso.split('-');
+      if (!year || !month || !day) return value;
+      return `${day}/${month}/${year}`;
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function parseChecklist(raw) {
+      try {
+        const parsed = Array.isArray(raw) ? raw : JSON.parse(raw || '[]');
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function statusLabel(status) {
+      return status || 'Pendente';
+    }
+
+    function initialsFromCompany(name) {
+      return String(name || 'Central Simples')
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part[0] || '')
+        .join('')
+        .toUpperCase() || 'CS';
+    }
+
+    function renderCompanyLogo(company) {
+      const companyName = company?.company_name || 'Central Simples';
+      const logoUrl = company?.logo_url || '';
+      const logo = document.getElementById('brand-logo');
+      const initials = document.getElementById('brand-initials');
+
+      document.getElementById('company-name').textContent = companyName;
+      initials.textContent = initialsFromCompany(companyName);
+
+      if (!logoUrl) {
+        logo.hidden = true;
+        initials.hidden = false;
+        logo.removeAttribute('src');
+        return;
+      }
+
+      logo.src = logoUrl;
+      logo.hidden = false;
+      initials.hidden = true;
+      logo.onerror = () => {
+        logo.hidden = true;
+        initials.hidden = false;
+      };
+    }
+
+    function abrirModalDecisao(type, title, message) {
+      const modal = document.getElementById('decision-modal');
+      const icon = document.getElementById('decision-modal-icon');
+      const titleEl = document.getElementById('decision-modal-title');
+      const messageEl = document.getElementById('decision-modal-message');
+
+      icon.className = `decision-modal-icon ${type}`;
+      icon.textContent = type === 'success' ? '✓' : '!';
+      titleEl.textContent = title;
+      messageEl.textContent = message;
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+    }
+
+    function fecharModalDecisao() {
+      const modal = document.getElementById('decision-modal');
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+
+    async function carregar() {
+      const params = new URLSearchParams(window.location.search);
+      _token = params.get('token');
+
+      if (!_token) {
+        document.getElementById('orc-title').textContent = 'Link inválido';
+        document.getElementById('orc-description').textContent = 'Nenhum token foi encontrado nesta URL.';
+        return;
+      }
+
+      const res = await fetch(`/api/public/orcamentos/${_token}`);
+      const data = await res.json();
+
+      if (!data.success) {
+        document.getElementById('orc-title').textContent = 'Orçamento não encontrado';
+        document.getElementById('orc-description').textContent = data.message || 'Este link pode ter expirado ou não existe mais.';
+        return;
+      }
+
+      _orc = data.data;
+      render();
+    }
+
+    function render() {
+      renderCompanyLogo(_orc.company);
+      document.getElementById('status-pill').textContent = statusLabel(_orc.status);
+      document.getElementById('orc-title').textContent = _orc.title || 'Orçamento';
+      document.getElementById('orc-description').textContent = _orc.description || 'Proposta enviada pela empresa.';
+      document.getElementById('total-value').textContent = brl(_orc.total_value);
+      document.getElementById('pdf-link').href = _orc.links?.pdf_url || '#';
+      const currentStatus = String(_orc.status || '').toLowerCase();
+      document.getElementById('decision-state').textContent = _orc.client_decision_note
+        ? `Último retorno registrado: ${_orc.client_decision_note}`
+        : currentStatus === 'aprovado'
+          ? 'Aprovação registrada com sucesso. A empresa já pode seguir com o atendimento.'
+          : currentStatus === 'recusado'
+            ? 'Recusa registrada. A empresa pode entrar em contato para ajustar a proposta.'
+            : 'O sistema vai registrar sua resposta imediatamente.';
+      document.getElementById('visit-address').value = _orc.client_address || '';
+
+      document.getElementById('meta-grid').innerHTML = `
+        <div class="meta-box">
+          <small>Cliente</small>
+          <strong>${escapeHtml(_orc.client_name || '--')}</strong>
+        </div>
+        <div class="meta-box">
+          <small>WhatsApp</small>
+          <strong>${escapeHtml(_orc.client_whatsapp || '--')}</strong>
+        </div>
+        <div class="meta-box">
+          <small>Validade</small>
+          <strong>${fmtDate(_orc.due_date)}</strong>
+        </div>
+        <div class="meta-box">
+          <small>Data do serviço</small>
+          <strong>${fmtDate(_orc.service_date)}</strong>
+        </div>
+      `;
+
+      document.getElementById('item-list').innerHTML = (_orc.items || []).length
+        ? (_orc.items || []).map((item) => `
+            <div class="item-row">
+              <div>
+                <small>Item</small>
+                <strong>${escapeHtml(item.description)}</strong>
+              </div>
+              <div style="text-align:right;">
+                <small>Subtotal</small>
+                <strong>${brl((Number(item.quantity) || 0) * (Number(item.unit_price) || 0))}</strong>
+              </div>
+            </div>
+          `).join('')
+        : `<div class="state">Nenhum item detalhado foi informado neste orçamento.</div>`;
+
+      const checklist = parseChecklist(_orc.checklist_json);
+      document.getElementById('check-list').innerHTML = checklist.length
+        ? checklist.map((item) => `
+            <div class="check-row">
+              <div class="dot" style="background:${item.done ? 'var(--success)' : 'var(--sky)'};"></div>
+              <div>${escapeHtml(item.text)}</div>
+            </div>
+          `).join('')
+        : `<div class="state">A empresa não cadastrou um checklist para este serviço.</div>`;
+    }
+
+    async function enviarDecisao(decision) {
+      if (!_token) return;
+
+      const res = await fetch(`/api/public/orcamentos/${_token}/decision`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          decision,
+          note: document.getElementById('client-note').value.trim(),
+          visit_address: document.getElementById('visit-address').value.trim(),
+          preferred_visit_time: document.getElementById('preferred-visit-time').value.trim()
+        })
+      });
+      const data = await res.json();
+
+      if (!data.success) {
+        document.getElementById('decision-state').textContent = data.message || 'Não foi possível registrar a decisão.';
+        return;
+      }
+
+      document.getElementById('decision-state').textContent = decision === 'approve'
+        ? 'Aprovação registrada com sucesso. A empresa já pode seguir com o atendimento.'
+        : 'Recusa registrada com sucesso. A empresa pode entrar em contato para ajustar a proposta.';
+      abrirModalDecisao(
+        decision === 'approve' ? 'success' : 'danger',
+        decision === 'approve' ? 'Orçamento aprovado!' : 'Antes de encerrar, vale repensar',
+        decision === 'approve'
+          ? 'Parabéns! Sua aprovação foi enviada com sucesso. A empresa recebeu sua resposta e já pode organizar os próximos passos do atendimento.'
+          : 'Sua recusa foi enviada, mas talvez ainda exista um bom acordo. Você pode pedir uma renegociação de valor, prazo ou forma de pagamento e voltar nesta tela para aprovar o orçamento quando estiver confortável.'
+      );
+      await carregar();
+    }
+
+    carregar();
+  </script>
+</body>
+</html>

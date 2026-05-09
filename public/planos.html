@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#2563eb" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Central Simples" />
+  <link rel="manifest" href="/manifest.json" />
+  <title>Central Simples - Planos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/cs-shared.css" />
+  <style>
+    /* ==========================================================================
+       PLANOS - CSS LOCAL
+       1. Hero e barra superior
+       2. Cards de planos
+       3. Alertas de trial/bloqueio
+       4. Mobile
+       ========================================================================== */
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,.28), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(37,211,102,.14), transparent 28%),
+        var(--navy);
+    }
+
+    .pricing-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 34px 0 46px;
+    }
+
+    .pricing-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 32px;
+    }
+
+    .pricing-logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .pricing-logo .brand-name {
+      font-size: 1.55rem;
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: .7rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .hero-card {
+      position: relative;
+      overflow: hidden;
+      padding: 34px;
+      border: 1px solid rgba(125,211,252,.18);
+      border-radius: 26px;
+      background:
+        linear-gradient(135deg, rgba(20,35,56,.96), rgba(10,21,32,.92)),
+        linear-gradient(90deg, rgba(37,99,235,.12), transparent);
+      box-shadow: 0 28px 80px rgba(0,0,0,.34);
+      margin-bottom: 22px;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(125,211,252,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(125,211,252,.06) 1px, transparent 1px);
+      background-size: 46px 46px;
+      pointer-events: none;
+      opacity: .75;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 1.5rem;
+      align-items: end;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      color: var(--sky);
+      font-size: .74rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+    }
+
+    .hero-card h1 {
+      max-width: 780px;
+      color: #fff;
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.25rem, 5vw, 4.4rem);
+      line-height: .96;
+      letter-spacing: -.05em;
+      margin-bottom: 14px;
+    }
+
+    .hero-card p {
+      max-width: 720px;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.65;
+    }
+
+    .status-card {
+      min-width: 260px;
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      backdrop-filter: blur(14px);
+    }
+
+    .status-card small {
+      display: block;
+      margin-bottom: .35rem;
+      color: var(--muted);
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-weight: 900;
+    }
+
+    .status-card strong {
+      display: block;
+      color: #fff;
+      font-size: 1.2rem;
+      margin-bottom: .45rem;
+    }
+
+    .status-card span {
+      color: var(--sky);
+      font-size: .86rem;
+      line-height: 1.45;
+    }
+
+    .notice {
+      display: none;
+      margin-bottom: 18px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(248,113,113,.24);
+      background: rgba(248,113,113,.1);
+      color: #fecaca;
+      line-height: 1.55;
+    }
+
+    .notice.show {
+      display: block;
+    }
+
+    .plan-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+      margin-top: 22px;
+    }
+
+    .plan-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+      padding: 24px;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(20,35,56,.86);
+      box-shadow: 0 20px 50px rgba(0,0,0,.22);
+    }
+
+    .plan-card.recommended {
+      border-color: rgba(125,211,252,.46);
+      background:
+        radial-gradient(circle at top right, rgba(37,211,102,.14), transparent 30%),
+        rgba(20,35,56,.94);
+      transform: translateY(-10px);
+    }
+
+    .ribbon {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(37,211,102,.14);
+      color: var(--wapp);
+      font-size: .68rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .plan-card h2 {
+      color: #fff;
+      font-size: 1.1rem;
+      margin-bottom: .35rem;
+    }
+
+    .plan-card .tagline {
+      min-height: 44px;
+      color: var(--muted);
+      font-size: .88rem;
+      line-height: 1.5;
+      margin-bottom: 1.1rem;
+    }
+
+    .price {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 1rem;
+      color: #fff;
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.65rem;
+      letter-spacing: -.05em;
+    }
+
+    .price span {
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .82rem;
+      letter-spacing: 0;
+    }
+
+    .feature-list {
+      display: grid;
+      gap: .72rem;
+      margin: 1rem 0 1.3rem;
+      color: var(--text);
+      font-size: .88rem;
+      line-height: 1.45;
+    }
+
+    .feature-list li {
+      list-style: none;
+      display: flex;
+      gap: .55rem;
+      align-items: flex-start;
+    }
+
+    .feature-list li::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      margin-top: .42rem;
+      border-radius: 999px;
+      background: var(--wapp);
+      box-shadow: 0 0 0 4px rgba(37,211,102,.1);
+      flex: 0 0 auto;
+    }
+
+    .plan-card .btn {
+      margin-top: auto;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .billing-note {
+      margin-top: 22px;
+      padding: 18px 20px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.045);
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.6;
+    }
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(20,35,56,.96);
+      border: 1px solid var(--border-2);
+      box-shadow: 0 18px 50px rgba(0,0,0,.3);
+      z-index: 90;
+    }
+
+    .toast.show {
+      display: flex;
+    }
+
+    @media (max-width: 900px) {
+      .hero-content,
+      .plan-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .plan-card.recommended {
+        transform: none;
+      }
+
+      .status-card {
+        min-width: 0;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .pricing-shell {
+        width: min(100% - 24px, 1180px);
+        padding-top: 18px;
+      }
+
+      .pricing-topbar {
+        align-items: center;
+        margin-bottom: 18px;
+        display: contents;
+      }
+
+      .pricing-shell {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .pricing-logo {
+        order: 1;
+        gap: 9px;
+        min-width: 0;
+        margin-bottom: 18px;
+      }
+
+      .pricing-logo .logo-3d {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+      }
+
+      .pricing-logo .eye {
+        width: 18px;
+        height: 18px;
+        border-width: 2px;
+      }
+
+      .pricing-logo .eye::after {
+        width: 5px;
+        height: 5px;
+        top: 5px;
+        left: 5px;
+      }
+
+      .pricing-logo .brand-name {
+        font-size: 1.18rem;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      .pricing-logo .brand-name span {
+        font-size: .52rem;
+        letter-spacing: .08em;
+        white-space: nowrap;
+      }
+
+      .topbar-actions {
+        order: 5;
+        width: 100%;
+        margin-top: 18px;
+        padding-top: 14px;
+        border-top: 1px solid rgba(255,255,255,.1);
+      }
+
+      .hero-card {
+        order: 2;
+      }
+
+      .notice {
+        order: 3;
+      }
+
+      .plan-grid {
+        order: 4;
+      }
+
+      .billing-note {
+        order: 6;
+      }
+
+      .topbar-actions .btn {
+        flex: 1;
+        justify-content: center;
+        padding-inline: 10px;
+      }
+
+      .hero-card {
+        padding: 24px 18px;
+        border-radius: 22px;
+      }
+
+      .hero-card p {
+        font-size: .92rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- =========================================================================
+       PLANOS - HTML
+       1. Topbar da marca
+       2. Mensagem do trial
+       3. Cards dos planos e acoes
+       ========================================================================= -->
+  <main class="pricing-shell">
+    <div class="pricing-topbar">
+      <a class="pricing-logo" href="/dashboard.html">
+        <div class="logo-3d"><div class="eye"></div></div>
+        <div class="brand-name">Central Simples<span>Gestão para autônomos</span></div>
+      </a>
+      <div class="topbar-actions">
+        <a class="btn btn-ghost" href="/dashboard.html">Voltar ao painel</a>
+        <button class="btn btn-ghost" id="btn-sair" type="button">Sair</button>
+      </div>
+    </div>
+
+    <section class="hero-card">
+      <div class="hero-content">
+        <div>
+          <div class="eyebrow">Planos mensais</div>
+          <h1>Escolha como a Central Simples vai trabalhar por você.</h1>
+          <p>O teste grátis libera todos os recursos por 15 dias. Depois, o usuário escolhe um plano mensal para continuar criando orçamentos, automatizando cobranças e acompanhando clientes com organização profissional.</p>
+        </div>
+        <aside class="status-card">
+          <small>Status da conta</small>
+          <strong id="status-title">Carregando...</strong>
+          <span id="status-detail">Verificando assinatura.</span>
+        </aside>
+      </div>
+    </section>
+
+    <div class="notice" id="expired-notice">
+      Seu teste grátis terminou. Escolha um plano para liberar novamente os recursos da Central Simples.
+    </div>
+
+    <section class="plan-grid" id="plan-grid"></section>
+
+    <div class="billing-note">
+      Próxima etapa importante: quando subirmos para o servidor oficial, vamos integrar um gateway bancário para receber Pix, boleto ou cartão automaticamente. Até lá, o checkout local registra o pedido e, em ambiente de teste, ativa o plano para podermos validar o fluxo completo.
+    </div>
+  </main>
+
+  <div class="toast" id="toast"><span id="toast-msg"></span></div>
+
+  <script>
+    // =========================================================================
+    // PLANOS - JS
+    // 1. Carrega status de assinatura
+    // 2. Renderiza planos
+    // 3. Direciona para checkout
+    // =========================================================================
+
+    let _plans = [];
+    let _billing = null;
+
+    function toast(message) {
+      const el = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = message;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 3200);
+    }
+
+    function planButtonLabel(plan) {
+      if (_billing?.status === 'active' && _billing.plan === plan.id) return 'Plano atual';
+      if (_billing?.status === 'trialing') return `Assinar ${plan.name}`;
+      return `Escolher ${plan.name}`;
+    }
+
+    function renderPlans() {
+      const grid = document.getElementById('plan-grid');
+      grid.innerHTML = _plans.map((plan) => `
+        <article class="plan-card ${plan.recommended ? 'recommended' : ''}">
+          ${plan.recommended ? '<div class="ribbon">Recomendado</div>' : ''}
+          <h2>${plan.name}</h2>
+          <p class="tagline">${plan.tagline}</p>
+          <div class="price">${plan.priceLabel}<span>/mês</span></div>
+          <ul class="feature-list">
+            ${plan.features.map((feature) => `<li>${feature}</li>`).join('')}
+          </ul>
+          <button
+            class="btn ${plan.recommended ? 'btn-primary' : 'btn-ghost'}"
+            type="button"
+            ${_billing?.status === 'active' && _billing.plan === plan.id ? 'disabled' : ''}
+            onclick="selecionarPlano('${plan.id}')"
+          >${planButtonLabel(plan)}</button>
+        </article>
+      `).join('');
+    }
+
+    function renderStatus() {
+      const title = document.getElementById('status-title');
+      const detail = document.getElementById('status-detail');
+      if (!_billing) return;
+
+      title.textContent = _billing.planName || 'Conta';
+      if (_billing.status === 'trialing') {
+        detail.textContent = `Teste grátis ativo. Restam ${_billing.daysRemaining} dia(s).`;
+      } else if (_billing.status === 'active') {
+        detail.textContent = _billing.message || 'Plano ativo.';
+      } else {
+        detail.textContent = 'Escolha um plano para continuar usando os recursos.';
+      }
+    }
+
+    function selecionarPlano(planId) {
+      window.location.href = `/pagamento.html?plan=${encodeURIComponent(planId)}`;
+    }
+
+    async function init() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('expired') === '1') {
+        document.getElementById('expired-notice').classList.add('show');
+      }
+
+      const [plansRes, statusRes] = await Promise.all([
+        fetch('/api/billing/plans', { credentials: 'same-origin' }),
+        fetch('/api/billing/status', { credentials: 'same-origin' }),
+      ]);
+
+      if (plansRes.status === 401 || statusRes.status === 401) {
+        window.location.replace('/login.html');
+        return;
+      }
+
+      const plansData = await plansRes.json();
+      const statusData = await statusRes.json();
+      _plans = plansData.success ? plansData.data : [];
+      _billing = statusData.success ? statusData.data : null;
+      renderStatus();
+      renderPlans();
+    }
+
+    document.getElementById('btn-sair').addEventListener('click', async () => {
+      await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
+      window.location.href = '/login.html';
+    });
+
+    init().catch(() => toast('Não foi possível carregar os planos agora.'));
+  </script>
+  <script src="/cs-pwa.js"></script>
+  <script src="/cs-billing.js"></script>
+</body>
+</html>

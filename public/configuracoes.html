@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<!-- ============================================================
+     CENTRAL SIMPLES — Configurações
+     Gerenciamento do perfil da empresa: nome e logo circular
+     que aparecem no cabeçalho dos PDFs gerados.
+     Requer: cs-shared.css, /api/company/profile
+     ============================================================ -->
+
+<head>
+  <!-- ── Meta e título ─────────────────────────────────────────────────────── -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#2563eb" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Central Simples" />
+  <link rel="manifest" href="/manifest.json" />
+  <title>Central Simples — Configurações</title>
+
+  <!-- ── Fontes ────────────────────────────────────────────────────────────── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- ── Design system compartilhado ──────────────────────────────────────── -->
+  <link rel="stylesheet" href="/cs-shared.css" />
+
+  <!-- ── Estilos específicos desta página ─────────────────────────────────── -->
+  <style>
+    /* ==========================================================================
+       CONFIGURACOES - CSS LOCAL
+       1. Upload de logo
+       2. Preview visual do PDF
+       3. Responsividade da tela de configuracoes
+       ========================================================================== */
+
+    /* ── Upload de logo — círculo clicável ───────────────────────────────── */
+    .logo-circle {
+      width: 96px; height: 96px; border-radius: 50%;
+      background: var(--navy-3); border: 2px dashed rgba(37,99,235,.4);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; flex-shrink: 0; cursor: pointer; transition: border-color .2s;
+    }
+    .logo-circle:hover { border-color: var(--blue-lt); }
+    .logo-circle img   { width: 100%; height: 100%; object-fit: cover; }
+
+    /* ── Preview do PDF ──────────────────────────────────────────────────── */
+    .preview-card   { background: #fff; border-radius: 10px; overflow: hidden; }
+
+    .preview-header {
+      background: #1e3a5f; padding: 16px 20px;
+      display: flex; align-items: center; gap: 14px;
+    }
+
+    .preview-logo-circle {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--navy-3); border: 2px solid rgba(125,211,252,.4);
+      overflow: hidden; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .preview-logo-circle img { width: 100%; height: 100%; object-fit: cover; }
+
+    .preview-body        { padding: 14px 20px; }
+    .preview-row         { display: flex; gap: 8px; margin-bottom: 6px; }
+    .preview-field       { flex: 1; }
+    .preview-field-label { font-size: .6rem; color: #94a3b8; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 2px; }
+    .preview-field-val   { font-size: .78rem; color: #1e293b; font-weight: 500; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
+
+    .preview-table-head { display: grid; grid-template-columns: 1fr 60px 90px; gap: 6px; background: #1e3a5f; border-radius: 4px; padding: 5px 8px; margin: 8px 0 4px; }
+    .preview-table-head span { font-size: .6rem; color: #fff; text-transform: uppercase; letter-spacing: .06em; }
+
+    .preview-table-row { display: grid; grid-template-columns: 1fr 60px 90px; gap: 6px; padding: 4px 8px; border-bottom: 1px solid #f1f5f9; }
+    .preview-table-row span { font-size: .72rem; color: #475569; }
+
+    .preview-total     { display: flex; justify-content: flex-end; padding: 8px; background: #f8fafc; border-radius: 0 0 6px 6px; margin-top: 4px; }
+    .preview-total-val { font-size: .9rem; font-weight: 700; color: #1e3a5f; }
+
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    .logo-upload-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    @media (max-width: 980px) {
+      .settings-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .logo-upload-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .logo-circle {
+        margin: 0 auto;
+      }
+
+      .preview-header {
+        flex-wrap: wrap;
+        align-items: flex-start;
+      }
+
+      .preview-header > div:last-child {
+        width: 100%;
+        margin-left: 0 !important;
+        text-align: left !important;
+      }
+
+      .preview-row {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .preview-header {
+        padding: 14px;
+        gap: 12px;
+      }
+
+      .preview-body {
+        padding: 12px 14px;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+  <!-- =========================================================================
+       CONFIGURACOES - HTML
+       1. Sidebar
+       2. Formulario da empresa e dados Pix
+       3. Preview do PDF e toast
+       ========================================================================= -->
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       GUARD DE SESSÃO
+       ══════════════════════════════════════════════════════════════════════ -->
+  <div class="guard-overlay" id="guard">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+      <div class="spinner"></div>
+      <p style="font-size:.8rem;color:var(--muted);">Verificando sessão…</p>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       LAYOUT PRINCIPAL
+       ══════════════════════════════════════════════════════════════════════ -->
+  <div class="app">
+
+    <!-- ── Sidebar / Navegação lateral ───────────────────────────────────── -->
+    <aside class="sidebar">
+
+      <!-- Logo -->
+      <a href="/dashboard.html" class="brand-logo sidebar-logo">
+        <div class="logo-3d">
+          <div class="eye"></div>
+        </div>
+        <div class="brand-name">
+          Central Simples
+        </div>
+      </a>
+      <div class="mobile-user-greeting">Seja bem-vindo, <span id="mobile-nome-usuario">usuário</span></div>
+
+      <!-- Menu de navegação -->
+      <nav style="display:flex;flex-direction:column;gap:2px;">
+        <a href="/dashboard.html" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+          </svg>
+          Dashboard
+        </a>
+        <a href="/orcamentos.html" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="9" y1="13" x2="15" y2="13"/>
+            <line x1="9" y1="17" x2="15" y2="17"/>
+          </svg>
+          Orçamentos
+        </a>
+        <a href="/configuracoes.html" class="nav-item active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          Configurações
+        </a>
+      </nav>
+
+      <!-- Botão de logout -->
+      <div class="sidebar-footer">
+        <button class="nav-item" id="btn-sair">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Sair
+        </button>
+      </div>
+
+    </aside><!-- /sidebar -->
+
+
+    <!-- ── Conteúdo principal ─────────────────────────────────────────────── -->
+    <main class="main fade-up" style="max-width:900px;">
+
+      <!-- Cabeçalho da página -->
+      <div class="page-header">
+        <h1>Configurações</h1>
+        <p>Dados da empresa que aparecem no cabeçalho de todos os PDFs gerados.</p>
+      </div>
+
+      <!-- Layout em 2 colunas: formulário + preview -->
+      <div class="settings-grid">
+
+        <!-- ── Coluna esquerda: Formulário de perfil ─────────────────────── -->
+        <div>
+
+          <!-- Card: Perfil da empresa -->
+          <div class="card">
+            <p class="card-title">Perfil da empresa</p>
+
+            <form id="form-perfil" enctype="multipart/form-data">
+
+              <!-- Upload de logo -->
+              <div style="margin-bottom:1.5rem;">
+                <label style="font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:.75rem;">
+                  Logo (circular no PDF)
+                </label>
+                <div class="logo-upload-row">
+
+                  <!-- Círculo clicável de preview da logo -->
+                  <div class="logo-circle" id="logo-circle"
+                    onclick="document.getElementById('input-logo').click()"
+                    title="Clique para trocar a logo">
+                    <img id="logo-img" src="" alt="" style="display:none;" />
+                    <svg id="logo-ph" width="28" height="28" fill="none"
+                      stroke="rgba(148,163,184,.4)" stroke-width="1.5" viewBox="0 0 24 24">
+                      <rect x="3" y="3" width="18" height="18" rx="2"/>
+                      <circle cx="8.5" cy="8.5" r="1.5"/>
+                      <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                  </div>
+
+                  <!-- Área de drag & drop -->
+                  <div>
+                    <div class="drop-zone" style="padding:.75rem 1rem;"
+                      onclick="document.getElementById('input-logo').click()">
+                      <p><strong>Clique para selecionar</strong> ou arraste</p>
+                      <small>PNG ou JPG · máx. 5 MB</small>
+                    </div>
+                    <p id="file-name" style="font-size:.72rem;color:var(--muted);margin-top:6px;display:none;"></p>
+                    <input type="file" id="input-logo" name="logo"
+                      accept=".png,.jpg,.jpeg" style="display:none;" />
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Campo: Nome da empresa -->
+              <div class="field">
+                <label for="company-name">Nome da empresa *</label>
+                <input id="company-name" type="text" name="company_name"
+                  maxlength="80" placeholder="Ex: João Silva — Design Gráfico" required />
+              </div>
+
+              <div class="grid-2">
+                <div class="field">
+                  <label for="pix-receiver-name">Nome para receber no Pix</label>
+                  <input id="pix-receiver-name" type="text" name="pix_receiver_name"
+                    maxlength="80" placeholder="Ex: Joao da Silva" />
+                </div>
+                <div class="field">
+                  <label for="pix-key">Chave Pix padrao</label>
+                  <input id="pix-key" type="text" name="pix_key"
+                    maxlength="120" placeholder="CPF, celular, email ou chave aleatoria" />
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="pix-message-suffix">Rodapé das mensagens automáticas</label>
+                <textarea id="pix-message-suffix" name="pix_message_suffix"
+                  placeholder="Ex: Qualquer duvida me chama aqui. Obrigado!"></textarea>
+              </div>
+
+              <div class="card" style="padding:1rem 1rem 1.1rem;margin-bottom:1rem;background:rgba(37,99,235,.05);border-color:rgba(37,99,235,.16);">
+                <p class="card-title" style="margin-bottom:.75rem;padding-bottom:.55rem;">Automação do WhatsApp</p>
+                <p id="whatsapp-status" style="font-size:.84rem;color:var(--muted);line-height:1.6;">
+                  Verificando configuração do envio automático...
+                </p>
+              </div>
+
+              <!-- Botão salvar -->
+              <button type="submit" class="btn btn-primary" id="btn-salvar" style="width:100%;">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                  <polyline points="17 21 17 13 7 13 7 21"/>
+                  <polyline points="7 3 7 8 15 8"/>
+                </svg>
+                Salvar configurações
+              </button>
+
+            </form>
+          </div><!-- /card perfil -->
+
+          <!-- Card: Atalho para criar orçamentos -->
+          <div class="card" style="background:rgba(37,211,102,.05);border-color:rgba(37,211,102,.15);margin-top:1rem;">
+            <p class="card-title" style="color:var(--wapp);">Criar e enviar orçamentos</p>
+            <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem;">
+              Para gerar PDFs e enviar pelo WhatsApp, acesse a página de orçamentos.
+            </p>
+            <a href="/orcamentos.html" class="btn btn-wapp" style="width:100%;justify-content:center;">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+              </svg>
+              Ir para Orçamentos
+            </a>
+          </div><!-- /card atalho -->
+
+        </div><!-- /coluna esquerda -->
+
+
+        <!-- ── Coluna direita: Preview do PDF ─────────────────────────────── -->
+        <div class="card">
+          <p class="card-title">Preview do PDF</p>
+          <p style="font-size:.8rem;color:var(--muted);margin-bottom:1rem;">
+            Veja como ficará o cabeçalho dos seus orçamentos.
+          </p>
+
+          <div class="preview-card">
+
+            <!-- Cabeçalho azul escuro (espelho do PDF real) -->
+            <div class="preview-header">
+              <div class="preview-logo-circle" id="prev-logo-wrap">
+                <img id="prev-logo-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;" />
+                <span id="prev-logo-initials" style="font-size:1.1rem;font-weight:700;color:#7dd3fc;">CS</span>
+              </div>
+              <div>
+                <div style="font-size:.65rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;">Empresa</div>
+                <div id="prev-company-name" style="font-size:1rem;font-weight:700;color:#fff;margin-top:2px;">Nome da Empresa</div>
+                <div style="font-size:.68rem;color:#7dd3fc;margin-top:2px;">Modelo do seu orçamento</div>
+              </div>
+              <div style="margin-left:auto;text-align:right;">
+                <div style="font-size:.6rem;color:rgba(255,255,255,.4);text-transform:uppercase;">Orçamento</div>
+                <div style="font-size:.85rem;font-weight:700;color:#7dd3fc;">#0001</div>
+              </div>
+            </div>
+
+            <!-- Corpo do preview (dados fictícios de exemplo) -->
+            <div class="preview-body">
+              <div style="font-size:.65rem;color:#fff;text-transform:uppercase;letter-spacing:.08em;background:#1e3a5f;border-radius:4px;padding:4px 8px;margin-bottom:8px;">Cliente</div>
+              <div class="preview-row">
+                <div class="preview-field">
+                  <div class="preview-field-label">Nome</div>
+                  <div class="preview-field-val">João da Silva</div>
+                </div>
+                <div class="preview-field">
+                  <div class="preview-field-label">Telefone</div>
+                  <div class="preview-field-val">(11) 99999-0000</div>
+                </div>
+              </div>
+              <div class="preview-table-head">
+                <span>Descrição</span><span>Qtd</span><span>Total</span>
+              </div>
+              <div class="preview-table-row">
+                <span>Serviço 1</span><span>1</span><span>R$ 1.500,00</span>
+              </div>
+              <div class="preview-table-row">
+                <span>Serviço 2</span><span>2</span><span>R$ 600,00</span>
+              </div>
+              <div class="preview-total">
+                <span class="preview-total-val">Total: R$ 2.100,00</span>
+              </div>
+            </div>
+
+          </div><!-- /preview-card -->
+        </div><!-- /coluna direita -->
+
+      </div><!-- /grid -->
+
+    </main><!-- /main -->
+
+  </div><!-- /app -->
+
+
+  <!-- ── Toast de feedback ─────────────────────────────────────────────────── -->
+  <div class="toast" id="toast">
+    <div class="dot"></div>
+    <span id="toast-msg"></span>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       JAVASCRIPT
+       ══════════════════════════════════════════════════════════════════════ -->
+  <script>
+    // =========================================================================
+    // CONFIGURACOES - JS
+    // 1. Autenticacao e carregamento do perfil
+    // 2. Toast e preview em tempo real
+    // 3. Upload/validacao de logo
+    // 4. Salvamento do perfil e logout
+    // =========================================================================
+
+    function preencherUsuarioMobile(nome) {
+      const el = document.getElementById('mobile-nome-usuario');
+      if (el) el.textContent = nome || 'usuário';
+    }
+
+    // ── 1. GUARD DE SESSÃO ────────────────────────────────────────────────────
+    // Verifica autenticação e carrega o perfil salvo.
+    // As funções atualizarPreview e mostrarLogoPreview são declaradas antes
+    // do guard para garantir que existam quando ele as chama.
+    (async () => {
+      try {
+        const r = await fetch('/api/company/profile', { credentials: 'same-origin' });
+        if (r.status === 401) { window.location.replace('/login.html'); return; }
+
+        const data = await r.json();
+        if (data.success && data.data) {
+          const {
+            company_name,
+            logo_path,
+            pix_key,
+            pix_receiver_name,
+            pix_message_suffix,
+            whatsapp_auto_ready,
+          } = data.data;
+          if (company_name) {
+            document.getElementById('company-name').value = company_name;
+            atualizarPreview(company_name);
+          }
+          document.getElementById('pix-key').value = pix_key || '';
+          document.getElementById('pix-receiver-name').value = pix_receiver_name || '';
+          document.getElementById('pix-message-suffix').value = pix_message_suffix || '';
+          document.getElementById('whatsapp-status').textContent = whatsapp_auto_ready
+            ? 'Envio automático do WhatsApp pronto no servidor. Follow-ups e cobranças podem ser disparados sem clique quando você ativar as automações.'
+            : 'O sistema já está preparado para agendar follow-up e cobranças, mas o envio automático no WhatsApp ainda depende das credenciais da API do WhatsApp no servidor.';
+          if (logo_path) mostrarLogoPreview('/' + logo_path);
+        }
+
+        try {
+          const me = await (await fetch('/api/me', { credentials: 'same-origin' })).json();
+          preencherUsuarioMobile(me.username || me.name || me.email || 'usuário');
+        } catch {}
+
+        document.getElementById('guard').remove();
+      } catch {
+        window.location.replace('/login.html');
+      }
+    })();
+
+
+    // ── 2. FUNÇÕES UTILITÁRIAS ────────────────────────────────────────────────
+
+    /** Exibe toast de feedback */
+    function toast(msg, type = 'success') {
+      const t = document.getElementById('toast');
+      t.className = `toast ${type}`;
+      document.getElementById('toast-msg').textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+
+    // ── 3. PREVIEW EM TEMPO REAL ──────────────────────────────────────────────
+
+    /** Atualiza o nome e as iniciais no preview do PDF */
+    function atualizarPreview(nome) {
+      document.getElementById('prev-company-name').textContent = nome || 'Nome da Empresa';
+      const initials = (nome || 'CS').split(' ').slice(0, 2)
+        .map(w => w[0]?.toUpperCase() || '').join('') || 'CS';
+      document.getElementById('prev-logo-initials').textContent = initials;
+    }
+
+    // Atualiza preview em tempo real ao digitar o nome
+    document.getElementById('company-name').addEventListener('input', function () {
+      atualizarPreview(this.value);
+    });
+
+
+    // ── 4. PREVIEW E UPLOAD DE LOGO ───────────────────────────────────────────
+
+    /** Exibe a logo no círculo e no preview do PDF */
+    function mostrarLogoPreview(src) {
+      // Atualiza círculo de upload
+      document.getElementById('logo-img').src = src;
+      document.getElementById('logo-img').style.display = 'block';
+      document.getElementById('logo-ph').style.display  = 'none';
+
+      // Atualiza preview do PDF
+      const img = document.getElementById('prev-logo-img');
+      const ini = document.getElementById('prev-logo-initials');
+      img.src = src;
+      img.style.display = 'block';
+      ini.style.display = 'none';
+    }
+
+    /** Valida e processa o arquivo de logo selecionado */
+    function processarArquivo(file) {
+      if (!['image/png', 'image/jpeg'].includes(file.type)) {
+        toast('Use PNG ou JPG.', 'error');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast('Máx. 5 MB.', 'error');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = e => mostrarLogoPreview(e.target.result);
+      reader.readAsDataURL(file);
+
+      const fn = document.getElementById('file-name');
+      fn.textContent  = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+      fn.style.display = 'block';
+    }
+
+    // Eventos de upload: clique no input
+    const inputLogo = document.getElementById('input-logo');
+    inputLogo.addEventListener('change', () => {
+      if (inputLogo.files[0]) processarArquivo(inputLogo.files[0]);
+    });
+
+    // Eventos de upload: drag & drop
+    const dropZone = document.querySelector('.drop-zone');
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
+    dropZone.addEventListener('dragleave', ()  => dropZone.classList.remove('drag'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('drag');
+      const file = e.dataTransfer.files[0];
+      if (file) {
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        inputLogo.files = dt.files;
+        processarArquivo(file);
+      }
+    });
+
+
+    // ── 5. SUBMIT DO FORMULÁRIO DE PERFIL ────────────────────────────────────
+    document.getElementById('form-perfil').addEventListener('submit', async e => {
+      e.preventDefault();
+
+      const nome = document.getElementById('company-name').value.trim();
+      if (!nome) { toast('Informe o nome da empresa.', 'error'); return; }
+
+      const btn = document.getElementById('btn-salvar');
+      btn.disabled    = true;
+      btn.textContent = 'Salvando…';
+
+      const fd = new FormData();
+      fd.append('company_name', nome);
+      fd.append('pix_key', document.getElementById('pix-key').value.trim());
+      fd.append('pix_receiver_name', document.getElementById('pix-receiver-name').value.trim());
+      fd.append('pix_message_suffix', document.getElementById('pix-message-suffix').value.trim());
+      if (inputLogo.files[0]) fd.append('logo', inputLogo.files[0]);
+
+      try {
+        const res  = await fetch('/api/company/profile', {
+          method: 'POST', credentials: 'same-origin', body: fd,
+        });
+        const data = await res.json();
+
+        if (data.success) toast('Configurações salvas!', 'success');
+        else              toast(data.message || 'Erro ao salvar.', 'error');
+      } catch {
+        toast('Erro de conexão.', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+            <polyline points="17 21 17 13 7 13 7 21"/>
+            <polyline points="7 3 7 8 15 8"/>
+          </svg>
+          Salvar configurações`;
+      }
+    });
+
+
+    // ── 6. LOGOUT ─────────────────────────────────────────────────────────────
+    document.getElementById('btn-sair').addEventListener('click', async () => {
+      await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
+      window.location.href = '/login.html';
+    });
+
+  </script>
+
+  <script src="/cs-pwa.js"></script>
+  <script src="/cs-billing.js"></script>
+</body>
+</html>

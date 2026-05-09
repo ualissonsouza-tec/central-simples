@@ -1,0 +1,2242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#2563eb" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Central Simples" />
+  <link rel="manifest" href="/manifest.json" />
+  <title>Central Simples - Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/cs-shared.css" />
+  <style>
+    /* ==========================================================================
+       DASHBOARD - CSS LOCAL
+       1. KPIs e agenda do dinheiro
+       2. Notificacoes e onboarding
+       3. Resumo mobile "Hoje"
+       4. Tabelas, cards e responsividade
+       ========================================================================== */
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .layout-grid {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .money-panel {
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+      padding: 1.15rem 1.25rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(125,211,252,.18);
+      background:
+        radial-gradient(circle at top right, rgba(37,211,102,.13), transparent 32%),
+        linear-gradient(135deg, rgba(37,99,235,.16), rgba(13,27,42,.94));
+    }
+
+    .money-panel::before {
+      content: "";
+      position: absolute;
+      inset: -50% auto auto -18%;
+      width: 320px;
+      height: 320px;
+      border-radius: 999px;
+      background: rgba(125,211,252,.08);
+      pointer-events: none;
+    }
+
+    .money-head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .money-head h2 {
+      color: #fff;
+      font-size: 1.08rem;
+    }
+
+    .money-head p {
+      margin-top: .25rem;
+      color: var(--muted);
+      font-size: .82rem;
+      line-height: 1.5;
+    }
+
+    .money-summary {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: .75rem;
+      margin-bottom: .9rem;
+    }
+
+    .money-box {
+      padding: .85rem;
+      border-radius: 14px;
+      background: rgba(255,255,255,.055);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .money-box small {
+      display: block;
+      margin-bottom: .25rem;
+      color: var(--muted);
+      font-size: .68rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .money-box strong {
+      display: block;
+      color: #fff;
+      font-size: 1.1rem;
+      font-family: 'DM Serif Display', serif;
+    }
+
+    .money-agenda-list {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: .65rem;
+    }
+
+    .money-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: .85rem;
+      padding: .85rem .9rem;
+      border-radius: 14px;
+      background: rgba(5,10,22,.42);
+      border: 1px solid rgba(255,255,255,.07);
+    }
+
+    .money-row strong {
+      display: block;
+      color: #fff;
+      font-size: .9rem;
+      margin-bottom: .2rem;
+    }
+
+    .money-row p {
+      color: var(--muted);
+      font-size: .78rem;
+      line-height: 1.45;
+    }
+
+    .money-value {
+      color: var(--wapp);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .panel-card {
+      background: var(--navy-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .dashboard-topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .dashboard-topbar .page-header {
+      margin-bottom: 0;
+    }
+
+    .notification-bell {
+      position: relative;
+      width: 48px;
+      height: 48px;
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(125,211,252,.22);
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at top, rgba(125,211,252,.18), transparent 58%),
+        rgba(20,35,56,.92);
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 14px 34px rgba(0,0,0,.28);
+      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+    }
+
+    .notification-bell:hover {
+      transform: translateY(-2px);
+      border-color: rgba(125,211,252,.48);
+      background: rgba(37,99,235,.18);
+    }
+
+    .notification-bell svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .notification-bell-badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      min-width: 22px;
+      height: 22px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 0 6px;
+      border-radius: 999px;
+      border: 2px solid var(--navy);
+      background: #ef4444;
+      color: #fff;
+      font-size: .68rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .notification-center {
+      scroll-margin-top: 1rem;
+      margin-bottom: 1.5rem;
+      background:
+        radial-gradient(circle at top left, rgba(125,211,252,.09), transparent 34%),
+        var(--navy-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .notifications-screen-modal {
+      max-width: 940px;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .notifications-screen-modal .notification-center {
+      margin: 0;
+      border: none;
+      border-radius: var(--radius-lg);
+      box-shadow: none;
+      max-height: 88vh;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+    }
+
+    .notifications-screen-modal .notification-list {
+      max-height: min(68vh, 620px);
+      overflow-y: auto;
+    }
+
+    .notification-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .notification-head h2 {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+      color: #fff;
+      font-size: 1rem;
+    }
+
+    .notification-head p {
+      margin-top: .2rem;
+      color: var(--muted);
+      font-size: .8rem;
+    }
+
+    .notification-badge {
+      min-width: 22px;
+      height: 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 7px;
+      border-radius: 999px;
+      background: #ef4444;
+      color: #fff;
+      font-size: .72rem;
+      font-weight: 900;
+    }
+
+    .notification-actions {
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .notification-list {
+      display: grid;
+      gap: .65rem;
+      padding: 1rem 1.25rem 1.2rem;
+    }
+
+    .notification-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: .85rem;
+      align-items: center;
+      padding: .85rem .95rem;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.07);
+      background: rgba(255,255,255,.03);
+    }
+
+    .notification-item.unread {
+      border-color: rgba(125,211,252,.22);
+      background: rgba(37,99,235,.08);
+    }
+
+    .notification-item strong {
+      display: block;
+      color: #fff;
+      font-size: .9rem;
+      margin-bottom: .25rem;
+    }
+
+    .notification-item p {
+      color: var(--muted);
+      font-size: .8rem;
+      line-height: 1.45;
+    }
+
+    .onboarding-panel {
+      margin-bottom: 1.5rem;
+      padding: 1.1rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(125,211,252,.18);
+      background:
+        radial-gradient(circle at top left, rgba(125,211,252,.12), transparent 32%),
+        rgba(20,35,56,.86);
+    }
+
+    .onboarding-panel[hidden] {
+      display: none;
+    }
+
+    .onboarding-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: flex-start;
+      margin-bottom: .9rem;
+    }
+
+    .onboarding-head h2 {
+      color: #fff;
+      font-size: 1.05rem;
+    }
+
+    .onboarding-head p {
+      margin-top: .25rem;
+      color: var(--muted);
+      font-size: .82rem;
+      line-height: 1.45;
+    }
+
+    .onboarding-steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: .75rem;
+    }
+
+    .onboarding-step {
+      display: flex;
+      gap: .75rem;
+      align-items: flex-start;
+      padding: .9rem;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.035);
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .onboarding-step.done {
+      border-color: rgba(74,222,128,.22);
+      background: rgba(74,222,128,.07);
+    }
+
+    .onboarding-dot {
+      width: 30px;
+      height: 30px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      border-radius: 10px;
+      background: rgba(37,99,235,.16);
+      color: var(--sky);
+      font-weight: 900;
+    }
+
+    .onboarding-step.done .onboarding-dot {
+      background: rgba(74,222,128,.16);
+      color: var(--success);
+    }
+
+    .onboarding-step strong {
+      display: block;
+      color: #fff;
+      font-size: .86rem;
+      margin-bottom: .2rem;
+    }
+
+    .onboarding-step span {
+      display: block;
+      color: var(--muted);
+      font-size: .75rem;
+      line-height: 1.35;
+    }
+
+    .mobile-today-panel {
+      display: none;
+    }
+
+    .mobile-today-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: .8rem;
+      margin-bottom: .75rem;
+    }
+
+    .mobile-today-head span {
+      color: var(--sky);
+      font-size: .72rem;
+      font-weight: 900;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .mobile-today-head strong {
+      display: block;
+      color: #fff;
+      font-size: 1.05rem;
+      line-height: 1.25;
+    }
+
+    .mobile-today-grid {
+      display: grid;
+      gap: .55rem;
+    }
+
+    .mobile-today-card {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: .65rem;
+      width: 100%;
+      padding: .75rem;
+      border-radius: 15px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.045);
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .mobile-today-icon {
+      width: 34px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      background: rgba(37,99,235,.18);
+      color: var(--sky);
+      font-weight: 900;
+    }
+
+    .mobile-today-card strong {
+      display: block;
+      color: #fff;
+      font-size: .86rem;
+    }
+
+    .mobile-today-card small {
+      display: block;
+      margin-top: .12rem;
+      color: var(--muted);
+      font-size: .73rem;
+      line-height: 1.35;
+    }
+
+    .mobile-today-value {
+      color: #fff;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .empty-notification-modal {
+      max-width: 440px;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .empty-notification-icon {
+      width: 72px;
+      height: 72px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      border-radius: 24px;
+      border: 1px solid rgba(125,211,252,.22);
+      background:
+        radial-gradient(circle at top, rgba(125,211,252,.18), transparent 60%),
+        rgba(37,99,235,.14);
+      color: var(--sky);
+      box-shadow: 0 18px 44px rgba(14,165,233,.13);
+    }
+
+    .empty-notification-icon svg {
+      width: 34px;
+      height: 34px;
+    }
+
+    .empty-notification-modal h2 {
+      color: #fff;
+      font-size: 1.25rem;
+      margin-bottom: .45rem;
+    }
+
+    .empty-notification-modal p {
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.6;
+    }
+
+    .notification-detail-modal {
+      max-width: 560px;
+      overflow: hidden;
+    }
+
+    .notification-detail-modal h2 {
+      color: #fff;
+      font-size: 1.25rem;
+      margin-bottom: .35rem;
+    }
+
+    .notification-detail-modal p {
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.6;
+    }
+
+    .notification-detail-grid {
+      display: grid;
+      gap: .65rem;
+      margin: 1rem 0;
+    }
+
+    .notification-detail-row {
+      display: grid;
+      grid-template-columns: 130px minmax(0, 1fr);
+      gap: .75rem;
+      align-items: start;
+      padding: .75rem .85rem;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.07);
+      background: rgba(255,255,255,.035);
+    }
+
+    .notification-detail-row span {
+      color: var(--muted);
+      font-size: .74rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .notification-detail-row strong {
+      color: #fff;
+      font-size: .9rem;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
+
+    .empty-notification-actions {
+      display: flex;
+      justify-content: center;
+      gap: .65rem;
+      flex-wrap: wrap;
+      margin-top: 1.15rem;
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .panel-head h2 {
+      font-size: 1rem;
+      color: #fff;
+    }
+
+    .panel-head p {
+      font-size: .8rem;
+      color: var(--muted);
+      margin-top: .2rem;
+    }
+
+    .panel-body {
+      padding: 1rem 1.25rem 1.2rem;
+    }
+
+    .agenda-list,
+    .mini-list {
+      display: grid;
+      gap: .75rem;
+    }
+
+    .agenda-item,
+    .mini-item {
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 12px;
+      padding: .95rem 1rem;
+    }
+
+    .agenda-item strong,
+    .mini-item strong {
+      display: block;
+      color: #fff;
+      margin-bottom: .25rem;
+      font-size: .92rem;
+    }
+
+    .agenda-item p,
+    .mini-item p {
+      color: var(--muted);
+      font-size: .82rem;
+      line-height: 1.5;
+    }
+
+    .summary-note {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: .85rem;
+    }
+
+    .summary-box {
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 14px;
+      padding: 1rem;
+    }
+
+    .summary-box small {
+      display: block;
+      font-size: .7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: .35rem;
+    }
+
+    .summary-box strong {
+      display: block;
+      color: #fff;
+      font-size: 1.3rem;
+      font-family: 'DM Serif Display', serif;
+    }
+
+    .summary-box p {
+      margin-top: .35rem;
+      color: var(--muted);
+      font-size: .78rem;
+    }
+
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .45rem;
+      margin-top: .7rem;
+    }
+
+    .action-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: .74rem;
+      font-weight: 700;
+      text-decoration: none;
+      border: 1px solid var(--border-2);
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .action-chip.primary {
+      background: rgba(37,99,235,.14);
+      border-color: rgba(37,99,235,.22);
+      color: var(--sky);
+    }
+
+    .action-chip.success {
+      background: rgba(37,211,102,.1);
+      border-color: rgba(37,211,102,.18);
+      color: var(--wapp);
+    }
+
+    .action-chip.warn {
+      background: rgba(251,191,36,.1);
+      border-color: rgba(251,191,36,.18);
+      color: #fbbf24;
+    }
+
+    .mini-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(125,211,252,.09);
+      border: 1px solid rgba(125,211,252,.18);
+      color: var(--sky);
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .mini-pill.warn {
+      background: rgba(251,191,36,.09);
+      border-color: rgba(251,191,36,.18);
+      color: #fbbf24;
+    }
+
+    .mini-pill.danger {
+      background: rgba(248,113,113,.09);
+      border-color: rgba(248,113,113,.18);
+      color: #f87171;
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+    }
+
+    .empty-state {
+      padding: 1rem;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed rgba(255,255,255,.1);
+      border-radius: 12px;
+      font-size: .84rem;
+    }
+
+    @media (max-width: 980px) {
+      .layout-grid,
+      .summary-note {
+        grid-template-columns: 1fr;
+      }
+
+      .money-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .65rem;
+        margin-bottom: .9rem;
+      }
+
+      .layout-grid {
+        gap: .85rem;
+        margin-bottom: .9rem;
+      }
+
+      .dashboard-topbar {
+        align-items: center;
+        gap: .75rem;
+        margin-bottom: .95rem;
+      }
+
+      .notification-bell {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+      }
+
+      .notification-center {
+        margin-bottom: .9rem;
+      }
+
+      .notifications-screen-modal .notification-center {
+        max-height: calc(100vh - 1rem);
+      }
+
+      .notifications-screen-modal .notification-list {
+        max-height: calc(100vh - 14rem);
+      }
+
+      .notification-head,
+      .notification-item {
+        grid-template-columns: 1fr;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .notification-actions,
+      .notification-actions .action-chip {
+        width: 100%;
+      }
+
+      .notification-actions .action-chip {
+        justify-content: center;
+      }
+
+      .onboarding-panel {
+        margin-bottom: .9rem;
+        padding: 1rem;
+      }
+
+      .onboarding-head {
+        flex-direction: column;
+      }
+
+      .onboarding-steps {
+        grid-template-columns: 1fr;
+      }
+
+      .mobile-today-panel {
+        display: block;
+        margin-bottom: .9rem;
+        padding: 1rem;
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(125,211,252,.18);
+        background:
+          radial-gradient(circle at top right, rgba(37,99,235,.2), transparent 42%),
+          rgba(20,35,56,.88);
+      }
+
+      .empty-notification-actions,
+      .empty-notification-actions .btn {
+        width: 100%;
+      }
+
+      .empty-notification-actions .btn {
+        justify-content: center;
+      }
+
+      .notification-detail-row {
+        grid-template-columns: 1fr;
+        gap: .35rem;
+      }
+
+      .money-panel {
+        margin-bottom: .9rem;
+        padding: 1rem;
+      }
+
+      .money-head {
+        flex-direction: column;
+      }
+
+      .money-summary {
+        grid-template-columns: 1fr;
+        gap: .55rem;
+      }
+
+      .money-row {
+        grid-template-columns: 1fr;
+      }
+
+      .panel-head {
+        padding: .85rem 1rem;
+      }
+
+      .panel-body {
+        padding: .85rem 1rem 1rem;
+      }
+
+      .table-header {
+        gap: .65rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- =========================================================================
+       DASHBOARD - HTML
+       1. Guard de autenticacao
+       2. Sidebar desktop/mobile
+       3. Topbar, notificacoes, onboarding e resumo
+       4. Paineis operacionais, tabela e modais
+       ========================================================================= -->
+  <div class="guard-overlay" id="guard">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+      <div class="spinner"></div>
+      <p style="font-size:.8rem;color:var(--muted);">Verificando sessão...</p>
+    </div>
+  </div>
+
+  <div class="app">
+    <aside class="sidebar">
+      <a href="/dashboard.html" class="brand-logo sidebar-logo">
+        <div class="logo-3d">
+          <div class="eye"></div>
+        </div>
+        <div class="brand-name">Central Simples</div>
+      </a>
+      <div class="mobile-user-greeting">Seja bem-vindo, <span id="mobile-nome-usuario">usuário</span></div>
+
+      <nav style="display:flex;flex-direction:column;gap:2px;">
+        <a href="/dashboard.html" class="nav-item active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+          </svg>
+          Dashboard
+        </a>
+        <a href="/orcamentos.html" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="9" y1="13" x2="15" y2="13"></line>
+            <line x1="9" y1="17" x2="15" y2="17"></line>
+          </svg>
+          Orçamentos
+        </a>
+        <a href="/configuracoes.html" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          Configurações
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="nav-item" id="btn-sair">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          Sair
+        </button>
+      </div>
+    </aside>
+
+    <main class="main fade-up">
+      <div class="dashboard-topbar">
+        <div class="page-header">
+          <h1>Painel operacional</h1>
+          <p>Resumo do negócio em tempo real. Bem-vindo, <span id="nome-usuario" style="color:var(--sky);font-weight:700;">...</span></p>
+        </div>
+        <button class="notification-bell" type="button" title="Abrir notificações" aria-label="Abrir notificações" onclick="abrirNotificacoes()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <span class="notification-bell-badge" id="notification-bell-badge">0</span>
+        </button>
+      </div>
+
+      <section class="onboarding-panel" id="onboarding-panel" hidden>
+        <div class="onboarding-head">
+          <div>
+            <h2>Primeiros passos para vender melhor</h2>
+            <p>Complete esta sequência uma vez e a Central Simples fica pronta para gerar orçamentos profissionais.</p>
+          </div>
+          <button class="action-chip" type="button" onclick="dispensarOnboarding()">Ocultar</button>
+        </div>
+        <div class="onboarding-steps" id="onboarding-steps"></div>
+      </section>
+
+      <section class="mobile-today-panel" id="mobile-today-panel" aria-label="Resumo de hoje"></section>
+
+      <div class="summary-grid" id="summary-grid"></div>
+
+      <section class="money-panel">
+        <div class="money-head">
+          <div>
+            <h2>Agenda do dinheiro</h2>
+            <p>Veja o que precisa cobrar hoje, o que está atrasado e o dinheiro previsto para os próximos dias.</p>
+          </div>
+          <a href="/orcamentos.html?folder=historico" class="btn btn-primary" style="padding:10px 16px;font-size:.82rem;">Ver histórico</a>
+        </div>
+        <div class="money-summary" id="money-agenda-summary"></div>
+        <div class="money-agenda-list" id="money-agenda-list"></div>
+      </section>
+
+      <div class="layout-grid">
+        <section class="panel-card">
+          <div class="panel-head">
+            <div>
+              <h2>Agenda do dia</h2>
+              <p>O que precisa de atencao agora para vender mais e esquecer menos.</p>
+            </div>
+            <a href="/orcamentos.html?folder=pipeline" class="btn btn-primary" style="padding:10px 16px;font-size:.82rem;">Ver pipeline</a>
+          </div>
+          <div class="panel-body">
+            <div class="agenda-list" id="agenda-list"></div>
+          </div>
+        </section>
+
+        <section class="panel-card">
+          <div class="panel-head">
+            <div>
+              <h2>Resumo mensal</h2>
+              <p>Foco em conversao, faturamento e clientes ativos.</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="summary-note" id="month-summary"></div>
+            <div class="mini-list" id="highlight-list" style="margin-top:1rem;"></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-header">
+          <div>
+            <h2>Movimento recente</h2>
+            <p>Últimos orçamentos e atalhos de ação rápida.</p>
+          </div>
+          <a href="/orcamentos.html?new=1" class="btn btn-primary" style="font-size:.82rem;padding:10px 16px;">Novo orçamento</a>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Serviço</th>
+                <th>Valor</th>
+                <th>Automacoes</th>
+                <th>Status</th>
+                <th>Acoes</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-orc">
+              <tr>
+                <td colspan="6" style="text-align:center;color:var(--muted);padding:2rem;">Carregando...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="notifications-screen-modal">
+    <div class="modal notifications-screen-modal" role="dialog" aria-modal="true" aria-labelledby="notifications-screen-title">
+      <section class="notification-center" id="notification-center">
+        <div class="notification-head">
+          <div>
+            <h2 id="notifications-screen-title">Notificações <span class="notification-badge" id="notification-badge" style="display:none;">0</span></h2>
+            <p>Aprovações, recusas, pagamentos e próximos avisos importantes ficam organizados aqui.</p>
+          </div>
+          <div class="notification-actions">
+            <button class="action-chip primary" onclick="pedirPermissaoAvisos()">Ativar avisos no celular</button>
+            <button class="action-chip" onclick="marcarTodasNotificacoes()">Marcar tudo como lido</button>
+            <button class="action-chip" onclick="fecharTelaNotificacoes()">Fechar</button>
+          </div>
+        </div>
+        <div class="notification-list" id="notification-list"></div>
+      </section>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="empty-notification-modal">
+    <div class="modal empty-notification-modal" role="dialog" aria-modal="true" aria-labelledby="empty-notification-title">
+      <div class="empty-notification-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          <path d="M4 4l16 16"></path>
+        </svg>
+      </div>
+      <h2 id="empty-notification-title">Nenhuma notificação no momento</h2>
+      <p>Tudo quieto por aqui. Quando um cliente aprovar um orçamento, recusar uma proposta ou um pagamento for confirmado, o aviso aparecerá neste sino.</p>
+      <div class="empty-notification-actions">
+        <button class="btn btn-primary" type="button" onclick="pedirPermissaoAvisos()">Ativar avisos no celular</button>
+        <button class="btn btn-ghost" type="button" onclick="fecharPopupSemNotificacoes()">Entendi</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="notification-detail-modal">
+    <div class="modal notification-detail-modal" role="dialog" aria-modal="true" aria-labelledby="notification-detail-title">
+      <h2 id="notification-detail-title">Detalhes da notificação</h2>
+      <p id="notification-detail-body">Confira todas as informações deste aviso.</p>
+      <div class="notification-detail-grid" id="notification-detail-grid"></div>
+      <div class="empty-notification-actions">
+        <button class="btn btn-primary" type="button" onclick="fecharDetalheNotificacao()">Entendi</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="charge-whatsapp-modal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="charge-whatsapp-title">
+      <div class="modal-head">
+        <div>
+          <h2 id="charge-whatsapp-title">Confirmar cobrança no Zap</h2>
+          <p style="color:var(--muted);font-size:.88rem;margin-top:.35rem;">Confira o valor e o Pix antes de abrir o WhatsApp do cliente.</p>
+        </div>
+        <button class="modal-close" onclick="cancelarCobrancaWhatsapp()">×</button>
+      </div>
+      <div class="field">
+        <label>Cliente</label>
+        <input id="charge-client-name" type="text" disabled />
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label>Valor da cobrança</label>
+          <input id="charge-amount" type="number" min="0" step="0.01" placeholder="0,00" />
+        </div>
+        <div class="field">
+          <label>Chave Pix</label>
+          <input id="charge-pix-key" type="text" placeholder="Informe a chave Pix para receber" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Nome do recebedor</label>
+        <input id="charge-receiver-name" type="text" placeholder="Nome que aparecerá na mensagem" />
+      </div>
+      <div class="field">
+        <label>Observação da mensagem</label>
+        <textarea id="charge-message-note" placeholder="Ex: Se já foi pago, pode desconsiderar."></textarea>
+      </div>
+      <div class="action-row" style="justify-content:flex-end;">
+        <button class="btn btn-ghost" type="button" onclick="cancelarCobrancaWhatsapp()">Cancelar</button>
+        <button class="btn btn-primary" type="button" onclick="confirmarCobrancaWhatsapp()">Enviar para o Zap</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">
+    <div class="dot"></div>
+    <span id="toast-msg"></span>
+  </div>
+
+  <script>
+    // =========================================================================
+    // DASHBOARD - JS
+    // 1. Estado global e inicializacao
+    // 2. Helpers de data, texto e regras de negocio
+    // 3. Carregamento de dados e renderizacao
+    // 4. Notificacoes e acoes do usuario
+    // 5. Mensagens WhatsApp e automacoes manuais
+    // =========================================================================
+
+    // -------------------------------------------------------------------------
+    // 1. Estado global e constantes
+    // -------------------------------------------------------------------------
+    let _orcs = [];
+    let _clients = [];
+    let _scheduledCharges = [];
+    let _notifications = [];
+    let _unreadNotifications = 0;
+    let _lastNotificationId = 0;
+    let _notificationsReady = false;
+    let _chargeWhatsappResolver = null;
+    let _company = { company_name: 'Central Simples' };
+
+    const STATUS_MAP = {
+      Aprovado: 'badge-green',
+      Pendente: 'badge-amber',
+      Rascunho: 'badge-gray',
+      Recusado: 'badge-red',
+      Pago: 'badge-blue'
+    };
+
+    // -------------------------------------------------------------------------
+    // 2. Inicializacao, autenticacao e logout
+    // -------------------------------------------------------------------------
+    function preencherUsuarioMobile(nome) {
+      const el = document.getElementById('mobile-nome-usuario');
+      if (el) el.textContent = nome || 'usuário';
+    }
+
+    (async function init() {
+      try {
+        const authRes = await fetch('/api/company/profile', { credentials: 'same-origin' });
+        if (authRes.status === 401) {
+          window.location.replace('/login.html');
+          return;
+        }
+
+        const companyData = await authRes.json();
+        if (companyData.success && companyData.data) _company = companyData.data;
+
+        try {
+          const me = await (await fetch('/api/me', { credentials: 'same-origin' })).json();
+          const nome = me.username || me.name || me.email || 'usuário';
+          if (me.username) document.getElementById('nome-usuario').textContent = me.username;
+          preencherUsuarioMobile(nome);
+        } catch {}
+
+        document.getElementById('guard').remove();
+        await carregarDados();
+        await carregarNotificacoes(false);
+        setInterval(() => carregarNotificacoes(true), 30000);
+      } catch (err) {
+        window.location.replace('/login.html');
+      }
+    })();
+
+    document.getElementById('btn-sair').addEventListener('click', async () => {
+      await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
+      window.location.href = '/login.html';
+    });
+
+    document.getElementById('empty-notification-modal').addEventListener('click', (event) => {
+      if (event.target.id === 'empty-notification-modal') fecharPopupSemNotificacoes();
+    });
+
+    document.getElementById('notifications-screen-modal').addEventListener('click', (event) => {
+      if (event.target.id === 'notifications-screen-modal') fecharTelaNotificacoes();
+    });
+
+    document.getElementById('notification-detail-modal').addEventListener('click', (event) => {
+      if (event.target.id === 'notification-detail-modal') fecharDetalheNotificacao();
+    });
+
+    document.getElementById('charge-whatsapp-modal').addEventListener('click', (event) => {
+      if (event.target.id === 'charge-whatsapp-modal') cancelarCobrancaWhatsapp();
+    });
+
+    // -------------------------------------------------------------------------
+    // 3. Helpers de UI, texto, datas e regras de negocio
+    // -------------------------------------------------------------------------
+    function toast(msg, type = 'success') {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      t.className = `toast ${type}`;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3200);
+    }
+
+    function brl(value) {
+      return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value) || 0);
+    }
+
+    function valorDecimalInput(value) {
+      return Number(String(value || '').replace(',', '.')) || 0;
+    }
+
+    function solicitarDadosCobranca(orc) {
+      const modal = document.getElementById('charge-whatsapp-modal');
+      document.getElementById('charge-client-name').value = orc.client_name || 'Cliente';
+      document.getElementById('charge-amount').value = (Number(orc.total_value) || 0).toFixed(2);
+      document.getElementById('charge-pix-key').value = _company.pix_key || '';
+      document.getElementById('charge-receiver-name').value = _company.pix_receiver_name || _company.company_name || '';
+      document.getElementById('charge-message-note').value = _company.pix_message_suffix || 'Se já foi pago, pode desconsiderar.';
+      modal.classList.add('open');
+      setTimeout(() => document.getElementById('charge-amount')?.focus(), 50);
+      return new Promise((resolve) => {
+        _chargeWhatsappResolver = resolve;
+      });
+    }
+
+    function fecharModalCobrancaWhatsapp(result = null) {
+      document.getElementById('charge-whatsapp-modal')?.classList.remove('open');
+      if (_chargeWhatsappResolver) {
+        _chargeWhatsappResolver(result);
+        _chargeWhatsappResolver = null;
+      }
+    }
+
+    function cancelarCobrancaWhatsapp() {
+      fecharModalCobrancaWhatsapp(null);
+    }
+
+    function confirmarCobrancaWhatsapp() {
+      const amount = valorDecimalInput(document.getElementById('charge-amount').value);
+      const pixKey = document.getElementById('charge-pix-key').value.trim();
+      const receiverName = document.getElementById('charge-receiver-name').value.trim();
+      const note = document.getElementById('charge-message-note').value.trim();
+
+      if (amount <= 0) {
+        toast('Informe o valor da cobrança.', 'error');
+        return;
+      }
+      if (!pixKey) {
+        toast('Informe a chave Pix para a cobrança.', 'error');
+        return;
+      }
+
+      fecharModalCobrancaWhatsapp({
+        amount,
+        pix_key: pixKey,
+        receiver_name: receiverName,
+        note,
+      });
+    }
+
+    function fmtDate(value) {
+      if (!value) return '--';
+      const iso = String(value).slice(0, 10);
+      const [year, month, day] = iso.split('-');
+      if (!year || !month || !day) return value;
+      return `${day}/${month}/${year}`;
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function orcamentosUrl(folder = 'pipeline', params = {}) {
+      const query = new URLSearchParams();
+      if (folder) query.set('folder', folder);
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          query.set(key, value);
+        }
+      });
+      return `/orcamentos.html?${query.toString()}`;
+    }
+
+    function destinoFuncaoAgenda(kind, id = null) {
+      if (kind === 'charge') return orcamentosUrl('cobrancas', { orcamento: id, acao: 'cobranca' });
+      if (['followup', 'recurrence', 'closing', 'return'].includes(kind)) {
+        return orcamentosUrl('automacoes', { orcamento: id, acao: kind });
+      }
+      return orcamentosUrl('pipeline', { orcamento: id });
+    }
+
+    function todayIso() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function addDays(base, amount) {
+      const date = new Date(`${base}T12:00:00`);
+      date.setDate(date.getDate() + amount);
+      return date.toISOString().slice(0, 10);
+    }
+
+    function daysFromToday(dateStr) {
+      if (!dateStr) return null;
+      const base = new Date(`${todayIso()}T12:00:00`);
+      const target = new Date(`${String(dateStr).slice(0, 10)}T12:00:00`);
+      return Math.round((target - base) / 86400000);
+    }
+
+    function getFollowupMeta(orc) {
+      if (orc.status !== 'Pendente' || !orc.approval_sent_at) return null;
+      const stage = Number(orc.follow_up_stage || 0);
+      const marks = [1, 3, 7];
+      if (stage >= marks.length) return null;
+      const target = addDays(String(orc.approval_sent_at).slice(0, 10), marks[stage]);
+      const diff = daysFromToday(target);
+      return {
+        stage: stage + 1,
+        target,
+        due: diff !== null && diff <= 0
+      };
+    }
+
+    function isChargeDue(orc) {
+      if (!orc.due_date || !['Pendente', 'Aprovado'].includes(orc.status)) return false;
+      const diff = daysFromToday(orc.due_date);
+      if (diff === null || diff > 1) return false;
+      if (!orc.reminder_sent_at) return true;
+      return String(orc.reminder_sent_at).slice(0, 10) < String(orc.due_date).slice(0, 10);
+    }
+
+    function isRecurrenceDue(orc) {
+      return Boolean(orc.recurrence_rule && orc.recurrence_next_date && daysFromToday(orc.recurrence_next_date) <= 0);
+    }
+
+    function isReturnDue(orc) {
+      return Boolean(orc.return_reminder_date && daysFromToday(orc.return_reminder_date) <= 0);
+    }
+
+    function isClosingDue(orc) {
+      return orc.status === 'Pago' && !orc.closing_message_sent_at;
+    }
+
+    function isScheduledChargeDue(item) {
+      return Boolean(item?.active && item?.next_run_at && daysFromToday(item.next_run_at) <= 0);
+    }
+
+    function getOrcById(id) {
+      return _orcs.find((item) => Number(item.id) === Number(id));
+    }
+
+    // -------------------------------------------------------------------------
+    // 4. Carregamento e renderizacao principal
+    // -------------------------------------------------------------------------
+    async function carregarDados() {
+      const [orcRes, clientRes, scheduledRes] = await Promise.all([
+        fetch('/api/orcamentos', { credentials: 'same-origin' }),
+        fetch('/api/clients', { credentials: 'same-origin' }),
+        fetch('/api/cobrancas-programadas', { credentials: 'same-origin' })
+      ]);
+      const orcData = await orcRes.json();
+      const clientData = await clientRes.json();
+      const scheduledData = await scheduledRes.json();
+      _orcs = orcData.success ? orcData.data : [];
+      _clients = clientData.success ? clientData.data : [];
+      _scheduledCharges = scheduledData.success ? scheduledData.data : [];
+      renderTudo();
+    }
+
+    function renderTudo() {
+      renderOnboarding();
+      renderMobileToday();
+      renderResumo();
+      renderAgendaDinheiro();
+      renderAgenda();
+      renderResumoMensal();
+      renderTabela();
+      renderNotificacoes();
+    }
+
+    function onboardingFoiOcultado() {
+      try {
+        return localStorage.getItem('cs_onboarding_dismissed') === '1';
+      } catch {
+        return false;
+      }
+    }
+
+    function isCompanyConfigured() {
+      const name = String(_company?.company_name || '').trim();
+      const defaultNames = ['Central Simples', 'Minha Empresa'];
+      return Boolean(
+        (name && !defaultNames.includes(name)) ||
+        _company?.logo_path ||
+        _company?.pix_key ||
+        _company?.pix_receiver_name
+      );
+    }
+
+    function renderOnboarding() {
+      const panel = document.getElementById('onboarding-panel');
+      const container = document.getElementById('onboarding-steps');
+      if (!panel || !container) return;
+
+      const steps = [
+        {
+          done: isCompanyConfigured(),
+          number: '1',
+          title: 'Configure sua empresa',
+          text: 'Logo, nome, Pix e assinatura das mensagens.',
+          href: '/configuracoes.html',
+        },
+        {
+          done: _clients.length > 0,
+          number: '2',
+          title: 'Cadastre seu primeiro cliente',
+          text: 'Nome e WhatsApp já bastam para começar.',
+          href: '/orcamentos.html?new=1',
+        },
+        {
+          done: _orcs.length > 0,
+          number: '3',
+          title: 'Crie o primeiro orçamento',
+          text: 'Gere PDF e envie pelo WhatsApp.',
+          href: '/orcamentos.html?new=1',
+        },
+      ];
+
+      const allDone = steps.every((step) => step.done);
+      panel.hidden = allDone || onboardingFoiOcultado();
+      if (panel.hidden) return;
+
+      container.innerHTML = steps.map((step) => `
+        <a class="onboarding-step ${step.done ? 'done' : ''}" href="${step.href}">
+          <span class="onboarding-dot">${step.done ? '&#10003;' : step.number}</span>
+          <span>
+            <strong>${step.title}</strong>
+            <span>${step.text}</span>
+          </span>
+        </a>
+      `).join('');
+    }
+
+    function dispensarOnboarding() {
+      try {
+        localStorage.setItem('cs_onboarding_dismissed', '1');
+      } catch {}
+      const panel = document.getElementById('onboarding-panel');
+      if (panel) panel.hidden = true;
+    }
+
+    function renderMobileToday() {
+      const panel = document.getElementById('mobile-today-panel');
+      if (!panel) return;
+
+      const moneyItems = getMoneyAgendaItems();
+      const urgentMoney = moneyItems
+        .filter((item) => item.diff <= 0)
+        .reduce((sum, item) => sum + item.value, 0);
+      const actions = getAgendaItems();
+      const mainAction = actions[0];
+      const headline = actions.length || urgentMoney || _unreadNotifications
+        ? 'Prioridades do dia'
+        : 'Tudo em dia por aqui';
+
+      panel.innerHTML = `
+        <div class="mobile-today-head">
+          <div>
+            <span>Hoje</span>
+            <strong>${headline}</strong>
+          </div>
+          <a class="action-chip primary" href="/orcamentos.html?new=1">Novo</a>
+        </div>
+        <div class="mobile-today-grid">
+          <a class="mobile-today-card" href="/orcamentos.html?folder=cobrancas">
+            <span class="mobile-today-icon">R$</span>
+            <span>
+              <strong>Cobrar agora</strong>
+              <small>${urgentMoney ? 'Valores vencidos ou para hoje' : 'Nenhuma cobrança urgente'}</small>
+            </span>
+            <span class="mobile-today-value">${brl(urgentMoney)}</span>
+          </a>
+          <a class="mobile-today-card" href="/orcamentos.html?folder=automacoes">
+            <span class="mobile-today-icon">!</span>
+            <span>
+              <strong>${actions.length} ação${actions.length === 1 ? '' : 'es'} pendente${actions.length === 1 ? '' : 's'}</strong>
+              <small>${mainAction ? escapeHtml(mainAction.title) : 'Sem follow-up ou recorrência para agora'}</small>
+            </span>
+            <span class="mobile-today-value">Abrir</span>
+          </a>
+          <button class="mobile-today-card" type="button" onclick="abrirNotificacoes()">
+            <span class="mobile-today-icon">S</span>
+            <span>
+              <strong>${_unreadNotifications} aviso${_unreadNotifications === 1 ? '' : 's'} novo${_unreadNotifications === 1 ? '' : 's'}</strong>
+              <small>Veja aprovações, pagamentos e respostas dos clientes.</small>
+            </span>
+            <span class="mobile-today-value">Ver</span>
+          </button>
+        </div>
+      `;
+    }
+
+    // -------------------------------------------------------------------------
+    // 5. Notificacoes do sino e push no celular
+    // -------------------------------------------------------------------------
+    async function carregarNotificacoes(silent = false) {
+      try {
+        const res = await fetch('/api/notifications?limit=100', { credentials: 'same-origin' });
+        const data = await res.json();
+        if (!data.success) return;
+
+        const newest = data.data?.[0] || null;
+        if (silent && _notificationsReady && newest && newest.id > _lastNotificationId && !newest.read_at) {
+          toast(newest.title, 'info');
+          window.CentralSimplesPwa?.showLocalNotification?.(newest.title, {
+            body: newest.body || 'Abra a Central Simples para ver os detalhes.',
+            data: { url: newest.action_url || '/dashboard.html' },
+          });
+        }
+
+        _notifications = data.data || [];
+        _unreadNotifications = Number(data.unread) || 0;
+        _lastNotificationId = Math.max(_lastNotificationId, ..._notifications.map((item) => Number(item.id) || 0), 0);
+        _notificationsReady = true;
+        renderNotificacoes();
+        renderMobileToday();
+      } catch {
+        if (!silent) {
+          renderNotificacoes();
+          renderMobileToday();
+        }
+      }
+    }
+
+    function notificationIcon(kind) {
+      if (kind === 'budget_approved') return 'Aprovado';
+      if (kind === 'budget_rejected') return 'Recusado';
+      if (['payment_received', 'payment_paid', 'paid'].includes(kind)) return 'Pagamento';
+      return 'Aviso';
+    }
+
+    function renderNotificacoes() {
+      const badge = document.getElementById('notification-badge');
+      const bellBadge = document.getElementById('notification-bell-badge');
+      const list = document.getElementById('notification-list');
+      if (!badge || !list) return;
+
+      badge.style.display = _unreadNotifications ? 'inline-flex' : 'none';
+      badge.textContent = _unreadNotifications > 99 ? '99+' : String(_unreadNotifications);
+      if (bellBadge) {
+        bellBadge.style.display = _unreadNotifications ? 'inline-flex' : 'none';
+        bellBadge.textContent = _unreadNotifications > 99 ? '99+' : String(_unreadNotifications);
+      }
+
+      if (!_notifications.length) {
+        list.innerHTML = `<div class="empty-state">Nenhum aviso ainda. Quando um cliente aprovar um orçamento ou um pagamento for confirmado, o sistema vai avisar aqui.</div>`;
+        return;
+      }
+
+      list.innerHTML = _notifications.map((item) => `
+        <div class="notification-item ${item.read_at ? '' : 'unread'}">
+          <div>
+            <strong>${escapeHtml(notificationIcon(item.kind))}: ${escapeHtml(item.title)}</strong>
+            <p>${escapeHtml(item.body || '')}</p>
+            <p style="margin-top:.25rem;font-size:.72rem;">${fmtDate(item.created_at)}</p>
+          </div>
+          <div class="action-row" style="justify-content:flex-end;margin-top:0;">
+            <button class="action-chip primary" type="button" onclick="abrirDetalheNotificacao(${item.id})">Abrir</button>
+            ${item.read_at ? '' : `<button class="action-chip" onclick="marcarNotificacaoLida(${item.id})">Lida</button>`}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function getNotificationById(id) {
+      return _notifications.find((item) => Number(item.id) === Number(id)) || null;
+    }
+
+    function renderCampoNotificacao(label, value) {
+      return `
+        <div class="notification-detail-row">
+          <span>${escapeHtml(label)}</span>
+          <strong>${escapeHtml(value || '--')}</strong>
+        </div>
+      `;
+    }
+
+    async function abrirDetalheNotificacao(id) {
+      const item = getNotificationById(id);
+      if (!item) {
+        toast('Notificação não encontrada.', 'error');
+        return;
+      }
+
+      if (!item.read_at) {
+        await fetch(`/api/notifications/${id}/read`, {
+          method: 'PUT',
+          credentials: 'same-origin',
+        });
+        item.read_at = new Date().toISOString();
+        _unreadNotifications = Math.max(0, _unreadNotifications - 1);
+        renderNotificacoes();
+        renderMobileToday();
+      }
+
+      document.getElementById('notification-detail-title').textContent = item.title || 'Detalhes da notificação';
+      document.getElementById('notification-detail-body').textContent = item.body || 'Este aviso não possui mensagem complementar.';
+      const detalhes = [
+        renderCampoNotificacao('Tipo', notificationIcon(item.kind)),
+        renderCampoNotificacao('Status', item.read_at ? 'Lida' : 'Não lida'),
+        renderCampoNotificacao('Data', fmtDate(item.created_at)),
+        renderCampoNotificacao('Cliente', item.client_name || '--'),
+        renderCampoNotificacao('WhatsApp', item.client_whatsapp || '--'),
+        renderCampoNotificacao('Endereço informado', item.client_address || '--'),
+        renderCampoNotificacao('Informações do cliente', item.client_decision_note || 'Nenhuma informação complementar enviada.'),
+        renderCampoNotificacao('Orçamento', item.orcamento_title || '--'),
+        renderCampoNotificacao('Status do orçamento', item.orcamento_status || '--'),
+        renderCampoNotificacao('Valor', item.orcamento_value ? brl(item.orcamento_value) : '--'),
+        renderCampoNotificacao('Validade', fmtDate(item.orcamento_due_date)),
+        renderCampoNotificacao('Data do serviço', fmtDate(item.orcamento_service_date)),
+        renderCampoNotificacao('Aprovado em', fmtDate(item.approved_at)),
+        renderCampoNotificacao('Recusado em', fmtDate(item.rejected_at)),
+        renderCampoNotificacao('Origem', item.entity_type || 'Sistema'),
+        renderCampoNotificacao('Código', item.entity_id ? `#${item.entity_id}` : '--')
+      ];
+      document.getElementById('notification-detail-grid').innerHTML = detalhes.join('');
+      document.getElementById('notification-detail-modal')?.classList.add('open');
+    }
+
+    function fecharDetalheNotificacao() {
+      document.getElementById('notification-detail-modal')?.classList.remove('open');
+    }
+
+    function abrirPopupSemNotificacoes() {
+      document.getElementById('empty-notification-modal')?.classList.add('open');
+    }
+
+    function fecharPopupSemNotificacoes() {
+      document.getElementById('empty-notification-modal')?.classList.remove('open');
+    }
+
+    async function abrirNotificacoes() {
+      if (!_notificationsReady) {
+        await carregarNotificacoes(false);
+      }
+
+      document.getElementById('notifications-screen-modal')?.classList.add('open');
+    }
+
+    function fecharTelaNotificacoes() {
+      document.getElementById('notifications-screen-modal')?.classList.remove('open');
+    }
+
+    async function marcarNotificacaoLida(id) {
+      await fetch(`/api/notifications/${id}/read`, {
+        method: 'PUT',
+        credentials: 'same-origin',
+      });
+      await carregarNotificacoes(false);
+    }
+
+    async function marcarTodasNotificacoes() {
+      await fetch('/api/notifications/read-all', {
+        method: 'PUT',
+        credentials: 'same-origin',
+      });
+      await carregarNotificacoes(false);
+    }
+
+    async function pedirPermissaoAvisos() {
+      const enablePush = window.CentralSimplesPwa?.enablePushNotifications;
+      const result = enablePush
+        ? await enablePush()
+        : await window.CentralSimplesPwa?.requestNotificationPermission?.();
+
+      if (result === 'subscribed' || result === 'granted') {
+        toast('Avisos push ativados neste dispositivo.', 'success');
+        window.CentralSimplesPwa?.showLocalNotification?.('Central Simples', {
+          body: 'Pronto. Quando houver novidades, vamos avisar por aqui.',
+          data: { url: '/dashboard.html' },
+        });
+        return;
+      }
+
+      if (result === 'not-configured') {
+        const local = await window.CentralSimplesPwa?.requestNotificationPermission?.();
+        if (local === 'granted') {
+          toast('Avisos locais ativados. O push real fica pronto ao configurar o servidor.', 'info');
+          return;
+        }
+      }
+
+      if (result === 'unsupported') {
+        toast('Este navegador não suporta avisos push.', 'error');
+        return;
+      }
+
+      if (result === 'failed') {
+        toast('Não foi possível salvar este dispositivo para receber avisos.', 'error');
+        return;
+      }
+
+      toast('Permissão de avisos não ativada.', 'info');
+    }
+
+    // -------------------------------------------------------------------------
+    // 6. KPIs, agenda do dinheiro, agenda do dia e tabela
+    // -------------------------------------------------------------------------
+    function renderResumo() {
+      const ativos = _orcs.filter((item) => item.status !== 'Recusado');
+      const totalCarteira = ativos.reduce((sum, item) => sum + (Number(item.total_value) || 0), 0);
+      const followups = _orcs.filter((item) => getFollowupMeta(item)?.due).length;
+      const cobrancas = _orcs.filter(isChargeDue).length + _scheduledCharges.filter(isScheduledChargeDue).length;
+      const recorrentes = _orcs.filter(isRecurrenceDue).length;
+      const pagos = _orcs.filter((item) => item.status === 'Pago').reduce((sum, item) => sum + (Number(item.total_value) || 0), 0);
+      const clientesAtivos = new Set(_orcs.map((item) => item.client_name).filter(Boolean)).size;
+
+      document.getElementById('summary-grid').innerHTML = `
+        <div class="kpi-card kpi-blue">
+          <div class="kpi-label">Pipeline total</div>
+          <div class="kpi-value">${brl(totalCarteira)}</div>
+          <div class="kpi-sub">${_orcs.length} orçamentos cadastrados</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Follow-ups</div>
+          <div class="kpi-value">${followups}</div>
+          <div class="kpi-sub">Propostas pedindo retorno</div>
+        </div>
+        <div class="kpi-card kpi-gold">
+          <div class="kpi-label">Cobrancas</div>
+          <div class="kpi-value">${cobrancas}</div>
+          <div class="kpi-sub">Pendencias de vencimento</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Recorrentes hoje</div>
+          <div class="kpi-value">${recorrentes}</div>
+          <div class="kpi-sub">Ciclos prontos para gerar</div>
+        </div>
+        <div class="kpi-card kpi-green">
+          <div class="kpi-label">Recebido</div>
+          <div class="kpi-value">${brl(pagos)}</div>
+          <div class="kpi-sub">Somente serviços pagos</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Clientes ativos</div>
+          <div class="kpi-value">${clientesAtivos || _clients.length}</div>
+          <div class="kpi-sub">Base com histórico recente</div>
+        </div>`;
+    }
+
+    function getMoneyAgendaItems() {
+      const items = [];
+
+      _orcs.forEach((orc) => {
+        const value = Number(orc.total_value) || 0;
+        if (!value || !orc.due_date || !['Pendente', 'Aprovado'].includes(orc.status)) return;
+
+        const diff = daysFromToday(orc.due_date);
+        if (diff === null || diff > 7) return;
+
+        items.push({
+          type: diff < 0 ? 'Atrasado' : diff === 0 ? 'Hoje' : `Em ${diff} dia${diff > 1 ? 's' : ''}`,
+          title: `${orc.client_name || 'Cliente'} - ${orc.title || 'Orçamento'}`,
+          text: `Vencimento ${fmtDate(orc.due_date)} | Status ${orc.status}`,
+          value,
+          date: orc.due_date,
+          diff,
+          action: `<button class="action-chip warn" onclick="enviarMensagemRapida(${orc.id}, 'charge')">Cobrar no Zap</button>`
+        });
+      });
+
+      _scheduledCharges.forEach((charge) => {
+        const value = Number(charge.amount) || 0;
+        if (!value || !charge.active || !charge.next_run_at) return;
+
+        const diff = daysFromToday(charge.next_run_at);
+        if (diff === null || diff > 7) return;
+
+        items.push({
+          type: diff < 0 ? 'Regra atrasada' : diff === 0 ? 'Regra hoje' : `Regra em ${diff} dia${diff > 1 ? 's' : ''}`,
+          title: `${charge.client_name || 'Cliente'} - ${charge.title || 'Cobrança programada'}`,
+          text: `Disparo previsto para ${fmtDate(charge.next_run_at)}`,
+          value,
+          date: charge.next_run_at,
+          diff,
+          action: `<a class="action-chip primary" href="${orcamentosUrl('cobrancas', { cobranca: charge.id })}">Abrir regra</a>`
+        });
+      });
+
+      return items.sort((a, b) => a.diff - b.diff || b.value - a.value);
+    }
+
+    function renderAgendaDinheiro() {
+      const items = getMoneyAgendaItems();
+      const openReceivable = _orcs
+        .filter((orc) => ['Pendente', 'Aprovado'].includes(orc.status))
+        .reduce((sum, orc) => sum + (Number(orc.total_value) || 0), 0);
+      const overdue = items.filter((item) => item.diff < 0).reduce((sum, item) => sum + item.value, 0);
+      const today = items.filter((item) => item.diff === 0).reduce((sum, item) => sum + item.value, 0);
+      const nextSeven = items.filter((item) => item.diff > 0 && item.diff <= 7).reduce((sum, item) => sum + item.value, 0);
+
+      document.getElementById('money-agenda-summary').innerHTML = `
+        <div class="money-box">
+          <small>Para receber hoje</small>
+          <strong>${brl(today)}</strong>
+        </div>
+        <div class="money-box">
+          <small>Atrasado</small>
+          <strong>${brl(overdue)}</strong>
+        </div>
+        <div class="money-box">
+          <small>Próximos 7 dias</small>
+          <strong>${brl(nextSeven)}</strong>
+        </div>
+        <div class="money-box">
+          <small>Em aberto</small>
+          <strong>${brl(openReceivable)}</strong>
+        </div>`;
+
+      const list = document.getElementById('money-agenda-list');
+      if (!items.length) {
+        list.innerHTML = `<div class="empty-state">Nenhuma cobrança para hoje ou para os próximos 7 dias. Quando houver dinheiro perto do vencimento, ele aparece aqui primeiro.</div>`;
+        return;
+      }
+
+      list.innerHTML = items.slice(0, 6).map((item) => `
+        <div class="money-row">
+          <div>
+            <strong>${escapeHtml(item.type)}: ${escapeHtml(item.title)}</strong>
+            <p>${escapeHtml(item.text)}</p>
+            <div class="action-row">${item.action}</div>
+          </div>
+          <div class="money-value">${brl(item.value)}</div>
+        </div>
+      `).join('');
+    }
+
+    function getAgendaItems() {
+      const items = [];
+
+      _orcs.forEach((orc) => {
+        const followUp = getFollowupMeta(orc);
+        if (followUp?.due) {
+          items.push({
+            priority: 1,
+            id: orc.id,
+            kind: 'followup',
+            title: `Follow-up ${followUp.stage} com ${orc.client_name}`,
+            text: `${orc.title} | aprovado por link disponível`
+          });
+        }
+        if (isChargeDue(orc)) {
+          const diff = daysFromToday(orc.due_date);
+          items.push({
+            priority: diff < 0 ? 0 : 2,
+            id: orc.id,
+            kind: 'charge',
+            title: diff < 0 ? `Cobrança atrasada` : `Lembrete de cobrança`,
+            text: `${orc.client_name} | ${orc.title} | vencimento ${fmtDate(orc.due_date)}`
+          });
+        }
+        if (isRecurrenceDue(orc)) {
+          items.push({
+            priority: 3,
+            id: orc.id,
+            kind: 'recurrence',
+            title: `Gerar próximo ciclo`,
+            text: `${orc.client_name} | ${orc.title} | data ${fmtDate(orc.recurrence_next_date)}`
+          });
+        }
+        if (isClosingDue(orc)) {
+          items.push({
+            priority: 4,
+            id: orc.id,
+            kind: 'closing',
+            title: `Pós-serviço`,
+            text: `${orc.client_name} | ${orc.title} | pedir feedback e nova venda`
+          });
+        }
+        if (isReturnDue(orc)) {
+          items.push({
+            priority: 5,
+            id: orc.id,
+            kind: 'return',
+            title: `Retorno preventivo`,
+            text: `${orc.client_name} | ${orc.title} | lembrar nova visita`
+          });
+        }
+      });
+
+      return items.sort((a, b) => a.priority - b.priority).slice(0, 6);
+    }
+
+    function renderAgenda() {
+      const agenda = getAgendaItems();
+      const container = document.getElementById('agenda-list');
+
+      if (!agenda.length) {
+        container.innerHTML = `<div class="empty-state">Nenhuma ação crítica no momento. O painel volta a chamar sua atenção quando houver follow-up, cobrança ou recorrência para executar.</div>`;
+        return;
+      }
+
+      container.innerHTML = agenda.map((item) => `
+        <div class="agenda-item">
+          <strong>${item.title}</strong>
+          <p>${item.text}</p>
+          <div class="action-row">
+            <button class="action-chip primary" onclick="executarAcao(${item.id}, '${item.kind}')">${rotuloAcao(item.kind)}</button>
+            <a class="action-chip" href="${destinoFuncaoAgenda(item.kind, item.id)}">${rotuloDestinoAcao(item.kind)}</a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function rotuloAcao(kind) {
+      if (kind === 'followup') return 'Enviar follow-up';
+      if (kind === 'charge') return 'Abrir cobranças';
+      if (kind === 'recurrence') return 'Gerar';
+      if (kind === 'closing') return 'Pós-serviço';
+      if (kind === 'return') return 'Lembrar retorno';
+      return 'Executar';
+    }
+
+    function rotuloDestinoAcao(kind) {
+      if (kind === 'charge') return 'Ver cobranças';
+      if (kind === 'followup') return 'Ver automações';
+      if (kind === 'recurrence') return 'Ver recorrências';
+      if (kind === 'closing') return 'Ver pós-serviço';
+      if (kind === 'return') return 'Ver retornos';
+      return 'Abrir função';
+    }
+
+    function renderResumoMensal() {
+      const month = new Date().toISOString().slice(0, 7);
+      const orcsMes = _orcs.filter((item) => String(item.created_at || '').slice(0, 7) === month);
+      const aprovados = orcsMes.filter((item) => ['Aprovado', 'Pago'].includes(item.status));
+      const taxa = orcsMes.length ? Math.round((aprovados.length / orcsMes.length) * 100) : 0;
+      const faturado = aprovados.reduce((sum, item) => sum + (Number(item.total_value) || 0), 0);
+      const pendentes = _orcs.filter((item) => item.status === 'Pendente').length;
+      const vencidos = _orcs.filter((item) => item.due_date && daysFromToday(item.due_date) < 0 && item.status !== 'Pago').length;
+      const novosClientes = _clients.filter((item) => String(item.created_at || '').slice(0, 7) === month).length;
+
+      document.getElementById('month-summary').innerHTML = `
+        <div class="summary-box">
+          <small>Faturamento potencial</small>
+          <strong>${brl(faturado)}</strong>
+          <p>Somando aprovados e pagos no mês.</p>
+        </div>
+        <div class="summary-box">
+          <small>Taxa de aprovação</small>
+          <strong>${taxa}%</strong>
+          <p>${aprovados.length} de ${orcsMes.length} orçamentos do mês.</p>
+        </div>
+        <div class="summary-box">
+          <small>Pendentes ativos</small>
+          <strong>${pendentes}</strong>
+          <p>Propostas esperando resposta do cliente.</p>
+        </div>
+        <div class="summary-box">
+          <small>Clientes novos</small>
+          <strong>${novosClientes}</strong>
+          <p>Cadastros criados neste mês.</p>
+        </div>`;
+
+      document.getElementById('highlight-list').innerHTML = `
+        <div class="mini-item">
+          <strong>Alertas principais</strong>
+          <p>${vencidos} vencidos, ${_orcs.filter(isReturnDue).length} retornos pendentes e ${_orcs.filter(isClosingDue).length} pós-serviços esperando mensagem.</p>
+        </div>
+        <div class="mini-item">
+          <strong>Resumo rapido</strong>
+          <p>Use o pipeline para disparar follow-up, gerar recorrências, mandar cobranças e abrir o link público de aprovação.</p>
+        </div>`;
+    }
+
+    function getAutomationBadges(orc) {
+      const badges = [];
+      if (getFollowupMeta(orc)?.due) badges.push('<span class="mini-pill warn">Follow-up</span>');
+      if (isChargeDue(orc)) badges.push('<span class="mini-pill danger">Cobrar</span>');
+      if (isRecurrenceDue(orc)) badges.push('<span class="mini-pill">Recorrência</span>');
+      if (isClosingDue(orc)) badges.push('<span class="mini-pill">Pós-serviço</span>');
+      if (isReturnDue(orc)) badges.push('<span class="mini-pill warn">Retorno</span>');
+      return badges.join('') || '<span style="color:var(--muted);font-size:.78rem;">Em dia</span>';
+    }
+
+    function renderTabela() {
+      const recentes = [..._orcs].slice(0, 8);
+      const tbody = document.getElementById('tbody-orc');
+
+      if (!recentes.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align:center;color:var(--muted);padding:2rem;">
+              Nenhum orçamento ainda. <a href="/orcamentos.html?new=1" style="color:var(--sky);text-decoration:none;">Criar o primeiro</a>
+            </td>
+          </tr>`;
+        return;
+      }
+
+      tbody.innerHTML = recentes.map((orc) => `
+        <tr>
+          <td>
+            <strong style="display:block;color:#fff;">${orc.client_name || '--'}</strong>
+            <span style="font-size:.76rem;color:var(--muted);">${orc.client_whatsapp || ''}</span>
+          </td>
+          <td>
+            <strong style="display:block;color:#fff;">${orc.title || '--'}</strong>
+            <span style="font-size:.76rem;color:var(--muted);">Validade ${fmtDate(orc.due_date)}</span>
+          </td>
+          <td style="font-weight:700;color:var(--sky);">${brl(orc.total_value)}</td>
+          <td><div class="action-row">${getAutomationBadges(orc)}</div></td>
+          <td><span class="badge ${STATUS_MAP[orc.status] || 'badge-gray'}">${orc.status}</span></td>
+          <td>
+            <div class="action-row">
+              <a class="action-chip primary" href="/api/orcamentos/${orc.id}/pdf" target="_blank">PDF</a>
+              <button class="action-chip success" onclick="enviarMensagemRapida(${orc.id}, 'budget')">Zap</button>
+              <button class="action-chip" onclick="copiarLink(${orc.id})">Link</button>
+              <a class="action-chip" href="${orcamentosUrl('pipeline', { orcamento: orc.id })}">Abrir</a>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // -------------------------------------------------------------------------
+    // 7. Links, WhatsApp e execucao das acoes operacionais
+    // -------------------------------------------------------------------------
+    async function obterLinks(id, markSent = false) {
+      const res = await fetch(`/api/orcamentos/${id}/share-links`, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ markSent })
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message || 'Não foi possível gerar o link.');
+      return data.data;
+    }
+
+    async function registrarEvento(id, kind, date = null) {
+      await fetch(`/api/orcamentos/${id}/automation-event`, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ kind, date })
+      });
+    }
+
+    function mensagemWhatsApp(kind, orc, links, chargeData = null) {
+      const empresa = _company.company_name || 'Central Simples';
+      const nome = orc.client_name || 'cliente';
+      const validade = fmtDate(orc.due_date);
+
+      if (kind === 'budget') {
+        const lines = [
+          `Olá ${nome}!`,
+          '',
+          `Preparei seu orçamento para *${orc.title}*.`,
+          'Abra o link abaixo para visualizar o valor, os detalhes do serviço e aprovar ou recusar o seu orçamento.',
+        ];
+        if (orc.due_date) {
+          lines.push(`Validade da proposta: ${validade}`);
+        }
+        lines.push('');
+        lines.push(`Link do orçamento: ${links.approval_url}`);
+        lines.push('');
+        lines.push('Fico à disposição para qualquer dúvida ou ajuste.');
+        lines.push('');
+        lines.push(`- ${empresa}`);
+        return lines.join('\n');
+      }
+      if (kind === 'followup') {
+        return `Olá ${nome}!\n\nPassando para acompanhar seu orçamento *${orc.title}*.\nSe preferir, você pode aprovar direto por aqui: ${links.approval_url}\n\n- ${empresa}`;
+      }
+      if (kind === 'charge') {
+        const chargeAmount = Number(chargeData?.amount ?? orc.total_value) || 0;
+        const pixKey = chargeData?.pix_key || _company.pix_key || '';
+        const receiverName = chargeData?.receiver_name || _company.pix_receiver_name || empresa;
+        const chargeNote = chargeData?.note || _company.pix_message_suffix || 'Se já foi pago, pode desconsiderar.';
+        const lines = [
+          `Olá ${nome}!`,
+          '',
+          `Passando para lembrar o pagamento referente a *${orc.title}* no valor de *${brl(chargeAmount)}*.`
+        ];
+        if (orc.due_date) {
+          lines.push(`Vencimento: ${validade}`);
+        }
+        if (pixKey) {
+          lines.push('');
+          lines.push(`Pix: ${pixKey}`);
+        }
+        if (receiverName) {
+          lines.push(`Recebedor: ${receiverName}`);
+        }
+        lines.push('');
+        lines.push(chargeNote);
+        lines.push('');
+        lines.push(`- ${empresa}`);
+        return lines.join('\n');
+      }
+      if (kind === 'closing') {
+        return `Olá ${nome}!\n\nObrigado pelo serviço em *${orc.title}*.\nSe quiser, posso deixar um novo atendimento ou manutenção agendada.\n\n- ${empresa}`;
+      }
+      if (kind === 'return') {
+        return `Olá ${nome}!\n\nEstou lembrando do retorno/manutenção de *${orc.title}*.\nSe fizer sentido, posso montar a próxima visita.\n\n- ${empresa}`;
+      }
+      return `Olá ${nome}!`;
+    }
+
+    async function enviarMensagemRapida(id, kind) {
+      const orc = getOrcById(id);
+      if (!orc) return;
+      const tel = String(orc.client_whatsapp || '').replace(/\D/g, '');
+      if (!tel) {
+        toast('Este cliente ainda não tem WhatsApp.', 'error');
+        return;
+      }
+
+      let chargeData = null;
+      if (kind === 'charge') {
+        chargeData = await solicitarDadosCobranca(orc);
+        if (!chargeData) return;
+      }
+
+      let links = { approval_url: '', pdf_url: '' };
+      if (['budget', 'followup'].includes(kind)) {
+        links = await obterLinks(id, kind === 'budget');
+      }
+
+      const message = mensagemWhatsApp(kind, orc, links, chargeData);
+      const whatsappUrl = `https://wa.me/${tel}?text=${encodeURIComponent(message)}`;
+      const opened = window.open(whatsappUrl, '_blank', 'noopener');
+      if (!opened) window.location.href = whatsappUrl;
+
+      if (kind === 'followup') await registrarEvento(id, 'followup');
+      if (kind === 'charge') await registrarEvento(id, 'charge_sent');
+      if (kind === 'closing') await registrarEvento(id, 'closing_sent');
+      if (kind === 'return') await registrarEvento(id, 'return_scheduled', addDays(todayIso(), 180));
+
+      await carregarDados();
+    }
+
+    async function copiarLink(id) {
+      try {
+        const links = await obterLinks(id, false);
+        await navigator.clipboard.writeText(links.approval_url);
+        toast('Link copiado.', 'success');
+      } catch (err) {
+        toast(err.message, 'error');
+      }
+    }
+
+    async function executarAcao(id, kind) {
+      if (kind === 'recurrence') {
+        const res = await fetch(`/api/orcamentos/${id}/generate-recurrence`, {
+          method: 'POST',
+          credentials: 'same-origin'
+        });
+        const data = await res.json();
+        if (!data.success) {
+          toast(data.message || 'Não foi possível gerar a recorrência.', 'error');
+          return;
+        }
+        toast(`Recorrência criada para ${fmtDate(data.generated_for)}.`, 'success');
+        await carregarDados();
+        return;
+      }
+
+      if (kind === 'charge') {
+        window.location.href = destinoFuncaoAgenda(kind, id);
+        return;
+      }
+      if (kind === 'closing') return enviarMensagemRapida(id, 'closing');
+      if (kind === 'return') return enviarMensagemRapida(id, 'return');
+      return enviarMensagemRapida(id, 'followup');
+    }
+  </script>
+  <script src="/cs-pwa.js"></script>
+  <script src="/cs-billing.js"></script>
+</body>
+</html>
