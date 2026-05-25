@@ -133,13 +133,14 @@ html, body {
   height: 48px;
   flex-shrink: 0;
   border-radius: 14px;
-  background: linear-gradient(145deg, #2563eb, #06b6d4);
+  background: url('/icon.svg') center / cover no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
   box-shadow:
     0 10px 25px rgba(0,0,0,.4),
-    inset 0 2px 6px rgba(255,255,255,.3);
+    inset 0 2px 6px rgba(255,255,255,.18);
   animation: floatLogo 3s ease-in-out infinite;
   transition: transform .3s ease;
 }
@@ -149,24 +150,10 @@ html, body {
 }
 
 .eye {
-  width: 22px;
-  height: 22px;
-  border: 3px solid #fff;
-  border-radius: 50%;
-  position: relative;
+  display: none;
 }
 
-.eye::after {
-  content: '';
-  width: 7px;
-  height: 7px;
-  background: #fff;
-  border-radius: 50%;
-  position: absolute;
-  top: 6px;
-  left: 6px;
-  animation: blink 4s infinite;
-}
+.eye::after { content: none; }
 
 @keyframes floatLogo {
   0% { transform: translateY(0); }

@@ -1,19 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
-    <linearGradient id="bg" x1="64" x2="448" y1="64" y2="448" gradientUnits="userSpaceOnUse">
+    <linearGradient id="bg" x1="42" x2="470" y1="42" y2="470" gradientUnits="userSpaceOnUse">
       <stop stop-color="#2563eb"/>
-      <stop offset="1" stop-color="#0ea5e9"/>
+      <stop offset=".48" stop-color="#0ea5e9"/>
+      <stop offset="1" stop-color="#06b6d4"/>
     </linearGradient>
-    <linearGradient id="eye" x1="146" x2="366" y1="206" y2="306" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#f8fafc"/>
+    <linearGradient id="eye" x1="114" x2="398" y1="185" y2="327" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff"/>
       <stop offset="1" stop-color="#bfdbfe"/>
     </linearGradient>
+    <radialGradient id="shine" cx="0" cy="0" r="1" gradientTransform="matrix(164 196 -196 164 134 96)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff" stop-opacity=".42"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
   </defs>
-  <rect width="512" height="512" rx="120" fill="#0d1b2a"/>
-  <rect x="56" y="56" width="400" height="400" rx="96" fill="url(#bg)" opacity=".96"/>
-  <path fill="#0d1b2a" opacity=".28" d="M111 330c48 54 117 84 197 70 74-13 126-68 148-137v101c0 51-41 92-92 92H148c-51 0-92-41-92-92V250c12 29 29 56 55 80Z"/>
-  <path fill="url(#eye)" d="M118 256c31-57 80-91 138-91s107 34 138 91c-31 57-80 91-138 91s-107-34-138-91Z"/>
-  <circle cx="256" cy="256" r="56" fill="#0d1b2a"/>
-  <circle cx="278" cy="232" r="18" fill="#7dd3fc"/>
-  <path fill="#ffffff" d="M151 132h58v28h-58zM303 352h58v28h-58z" opacity=".88"/>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <rect width="512" height="512" fill="url(#shine)"/>
+  <path fill="#0d1b2a" opacity=".18" d="M58 316c56 72 139 112 237 94 92-16 161-84 217-178v166c0 63-51 114-114 114H114C51 512 0 461 0 398V246c14 25 33 49 58 70Z"/>
+  <path fill="url(#eye)" d="M98 256c36-68 92-108 158-108s122 40 158 108c-36 68-92 108-158 108S134 324 98 256Z"/>
+  <circle cx="256" cy="256" r="62" fill="#0d1b2a"/>
+  <circle cx="280" cy="232" r="19" fill="#7dd3fc"/>
+  <path fill="#ffffff" d="M118 112h75c9 0 16 7 16 16v14c0 9-7 16-16 16h-75c-9 0-16-7-16-16v-14c0-9 7-16 16-16ZM319 354h75c9 0 16 7 16 16v14c0 9-7 16-16 16h-75c-9 0-16-7-16-16v-14c0-9 7-16 16-16Z" opacity=".9"/>
 </svg>
