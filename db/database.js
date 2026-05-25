@@ -1,8 +1,11 @@
 // ============================================================================
-// BANCO DE DADOS - SQLITE LOCAL
-// Responsavel por criar tabelas, aplicar migracoes simples e exportar a conexao.
-// Quando migrarmos para PostgreSQL, este arquivo vira a principal referencia.
+// BANCO DE DADOS
+// Usa SQLite no ambiente local e PostgreSQL/Neon quando DATABASE_URL existir.
 // ============================================================================
+
+if (process.env.DATABASE_URL) {
+  module.exports = require('./postgres');
+} else {
 
 // ----------------------------------------------------------------------------
 // 1. Imports e caminho do arquivo do banco
@@ -367,3 +370,4 @@ db.serialize(() => {
 // 4. Export da conexao compartilhada
 // ----------------------------------------------------------------------------
 module.exports = db;
+}

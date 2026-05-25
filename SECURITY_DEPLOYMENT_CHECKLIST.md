@@ -49,6 +49,8 @@ Use este arquivo antes de hospedar a aplicacao no servidor oficial.
 
 - Nao usar banco dentro de OneDrive, Dropbox ou pasta sincronizada em producao.
 - Definir `DB_PATH` apontando para um disco persistente e privado do servidor se continuar com SQLite.
+- Para Render + Neon, configurar `DATABASE_URL` e `PGSSLMODE=require`; quando `DATABASE_URL` existir, o sistema usa PostgreSQL automaticamente.
+- Validar o plano gratuito do Neon antes de clientes reais: limites de armazenamento, pausas por inatividade, backups e janela de restauracao.
 - Criar rotina automatica de backup e testar restauracao.
 - Verificar permissao do arquivo do banco para que apenas o usuario do servidor consiga ler e escrever.
 - Planejar migracao para PostgreSQL quando houver muitos usuarios, muitos orcamentos simultaneos ou automacoes rodando em paralelo.
