@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: central-simples
+    runtime: node
+    plan: free
+    branch: main
+    buildCommand: npm ci
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MASTER_USERNAME
+        value: admin
+      - key: MASTER_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: PGSSLMODE
+        value: require
+      - key: PG_POOL_MAX
+        value: "5"
+      - key: PRIVACY_VERSION
+        value: "2026-05-09"
+      - key: APP_BASE_URL
+        sync: false
