@@ -1453,6 +1453,7 @@
       return Boolean(
         (name && !defaultNames.includes(name)) ||
         _company?.logo_path ||
+        _company?.logo_data_url ||
         _company?.pix_key ||
         _company?.pix_receiver_name
       );
@@ -1469,21 +1470,21 @@
           number: '1',
           title: 'Configure sua empresa',
           text: 'Logo, nome, Pix e assinatura das mensagens.',
-          href: '/configuracoes.html',
+          href: '/configuracoes.html?onboarding=1&step=company',
         },
         {
           done: _clients.length > 0,
           number: '2',
           title: 'Cadastre seu primeiro cliente',
           text: 'Nome e WhatsApp já bastam para começar.',
-          href: '/orcamentos.html?new=1',
+          href: '/orcamentos.html?new=1&onboarding=1&step=client',
         },
         {
           done: _orcs.length > 0,
           number: '3',
           title: 'Crie o primeiro orçamento',
           text: 'Gere PDF e envie pelo WhatsApp.',
-          href: '/orcamentos.html?new=1',
+          href: '/orcamentos.html?new=1&onboarding=1&step=budget',
         },
       ];
 

@@ -10,7 +10,7 @@ const crypto = require('crypto');
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const db = require('../db/database');
-const { ensureTrialForUser, getBillingStatusForUserId } = require('../lib/billing');
+const { ensureTrialForUser, getBillingStatusForUserId, getTrialDays } = require('../lib/billing');
 const { normalizeCpfCnpj } = require('../lib/documentValidator');
 const { isConfigured: isEmailConfigured, sendPasswordResetEmail } = require('../lib/emailService');
 const {
@@ -252,26 +252,30 @@ router.post('/register', async (req, res) => {
       });
     }
 
+    const trialDays = getTrialDays();
+    const trialModifier = `+${trialDays} days`;
+
     await dbRun(
       `INSERT INTO users (
          username, email, document_type, document_number, password_hash, plan,
          trial_started_at, trial_ends_at, subscription_status,
          signup_ip_hash, signup_device_hash, privacy_accepted_at, privacy_version,
          active, created_at
-       ) VALUES (?, ?, ?, ?, ?, 'free', datetime('now'), datetime('now', '+15 days'), 'trialing', ?, ?, datetime('now'), ?, 1, datetime('now'))`,
+       ) VALUES (?, ?, ?, ?, ?, 'free', datetime('now'), datetime('now', ?), 'trialing', ?, ?, datetime('now'), ?, 1, datetime('now'))`,
       [
         username,
         email,
         documentData.type,
         documentData.digits,
         hashPassword(password),
+        trialModifier,
         signupIpHash,
         signupDeviceHash,
         privacyVersion,
       ]
     );
 
-    return res.status(201).json({ success: true, message: 'Conta criada! Seu teste gratis de 15 dias esta ativo.' });
+    return res.status(201).json({ success: true, message: `Conta criada! Seu teste gratis de ${trialDays} dias esta ativo.` });
   } catch (err) {
     console.error('[AUTH register]', err.message);
     if (err.code === 'SQLITE_CONSTRAINT') {

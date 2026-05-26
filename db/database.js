@@ -117,6 +117,7 @@ db.serialize(() => {
     id           INTEGER PRIMARY KEY AUTOINCREMENT,
     company_name TEXT NOT NULL DEFAULT 'Minha Empresa',
     logo_path    TEXT DEFAULT NULL,
+    logo_data_url TEXT DEFAULT '',
     created_at   TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at   TEXT NOT NULL DEFAULT (datetime('now'))
   )`);
@@ -327,6 +328,7 @@ db.serialize(() => {
     ['orcamentos', 'auto_charge_enabled', 'INTEGER NOT NULL DEFAULT 0'],
     ['orcamentos', 'last_automation_error', "TEXT DEFAULT ''"],
     ['company_profile', 'user_id', 'INTEGER DEFAULT NULL'],
+    ['company_profile', 'logo_data_url', "TEXT DEFAULT ''"],
     ['company_profile', 'pix_key', "TEXT DEFAULT ''"],
     ['company_profile', 'pix_receiver_name', "TEXT DEFAULT ''"],
     ['company_profile', 'pix_message_suffix', "TEXT DEFAULT ''"],

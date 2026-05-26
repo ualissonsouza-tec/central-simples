@@ -22,7 +22,35 @@ services:
         value: require
       - key: PG_POOL_MAX
         value: "5"
+      - key: TRIAL_DAYS
+        value: "30"
       - key: PRIVACY_VERSION
         value: "2026-05-09"
       - key: APP_BASE_URL
+        sync: false
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_SECURE
+        value: "false"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      - key: WHATSAPP_ACCESS_TOKEN
+        sync: false
+      - key: WHATSAPP_PHONE_NUMBER_ID
+        sync: false
+      - key: WHATSAPP_API_VERSION
+        value: v23.0
+      - key: WHATSAPP_TEMPLATE_LANGUAGE
+        value: pt_BR
+      - key: WHATSAPP_TEMPLATE_FOLLOWUP
+        sync: false
+      - key: WHATSAPP_TEMPLATE_CHARGE
+        sync: false
+      - key: WHATSAPP_TEMPLATE_RECURRING_CHARGE
         sync: false

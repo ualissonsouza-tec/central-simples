@@ -159,6 +159,7 @@ async function getCompanyByUser(userId) {
     (await dbGet('SELECT * FROM company_profile WHERE user_id IS ? LIMIT 1', [userId])) || {
       company_name: 'Central Simples',
       logo_path: null,
+      logo_data_url: '',
     }
   );
 }

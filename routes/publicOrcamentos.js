@@ -50,7 +50,7 @@ function buildPublicLinks(req, token, company = null) {
     pdf_url: `${origin}/api/public/orcamentos/${token}/pdf`,
   };
 
-  if (company?.logo_path) {
+  if (company?.logo_data_url || company?.logo_path) {
     links.logo_url = `${origin}/api/public/orcamentos/${token}/logo`;
   }
 
@@ -62,6 +62,13 @@ function publicCompany(company, links = {}) {
     company_name: company?.company_name || 'Central Simples',
     logo_path: company?.logo_path || null,
     logo_url: links.logo_url || null,
+  };
+}
+
+function pdfCompany(company, links = {}) {
+  return {
+    ...publicCompany(company, links),
+    logo_data_url: company?.logo_data_url || '',
   };
 }
 
@@ -104,14 +111,25 @@ function resolveLogoPath(logoPath) {
   return fullPath;
 }
 
+function decodeLogoDataUrl(value) {
+  const match = String(value || '').match(/^data:(image\/(?:png|jpeg));base64,([a-z0-9+/=]+)$/i);
+  if (!match) return null;
+
+  return {
+    mime: match[1],
+    buffer: Buffer.from(match[2], 'base64'),
+  };
+}
+
 async function getCompanyByUser(userId) {
   return (
     (await dbGet(
-      'SELECT company_name, logo_path FROM company_profile WHERE user_id IS ? LIMIT 1',
+      'SELECT company_name, logo_path, logo_data_url FROM company_profile WHERE user_id IS ? LIMIT 1',
       [userId]
     )) || {
       company_name: 'Central Simples',
       logo_path: null,
+      logo_data_url: '',
     }
   );
 }
@@ -193,6 +211,13 @@ router.get('/:token/logo', async (req, res) => {
     }
 
     const bundle = await fetchByToken(token);
+    const logoData = decodeLogoDataUrl(bundle?.company?.logo_data_url);
+    if (logoData) {
+      res.setHeader('Cache-Control', 'public, max-age=3600');
+      res.type(logoData.mime);
+      return res.send(logoData.buffer);
+    }
+
     const logoPath = resolveLogoPath(bundle?.company?.logo_path);
 
     if (!logoPath || !fs.existsSync(logoPath)) {
@@ -223,7 +248,7 @@ router.get('/:token/pdf', async (req, res) => {
       {
         orc: bundle.orc,
         items: bundle.items,
-        company: publicCompany(bundle.company),
+        company: pdfCompany(bundle.company),
       },
       {
         kind: 'budget',

@@ -437,6 +437,7 @@
           const {
             company_name,
             logo_path,
+            logo_data_url,
             pix_key,
             pix_receiver_name,
             pix_message_suffix,
@@ -452,7 +453,8 @@
           document.getElementById('whatsapp-status').textContent = whatsapp_auto_ready
             ? 'Envio automático do WhatsApp pronto no servidor. Follow-ups e cobranças podem ser disparados sem clique quando você ativar as automações.'
             : 'O sistema já está preparado para agendar follow-up e cobranças, mas o envio automático no WhatsApp ainda depende das credenciais da API do WhatsApp no servidor.';
-          if (logo_path) mostrarLogoPreview('/' + logo_path);
+          const logoSrc = logo_data_url || (logo_path ? '/' + logo_path : '');
+          if (logoSrc) mostrarLogoPreview(logoSrc);
         }
 
         try {
@@ -579,8 +581,12 @@
         });
         const data = await res.json();
 
-        if (data.success) toast('Configurações salvas!', 'success');
-        else              toast(data.message || 'Erro ao salvar.', 'error');
+        if (data.success) {
+          toast('Configurações salvas!', 'success');
+          voltarDashboardAposOnboarding();
+        } else {
+          toast(data.message || 'Erro ao salvar.', 'error');
+        }
       } catch {
         toast('Erro de conexão.', 'error');
       } finally {
@@ -597,6 +603,17 @@
 
 
     // ── 6. LOGOUT ─────────────────────────────────────────────────────────────
+    function estaNoOnboarding() {
+      return new URLSearchParams(window.location.search).get('onboarding') === '1';
+    }
+
+    function voltarDashboardAposOnboarding() {
+      if (!estaNoOnboarding()) return;
+      setTimeout(() => {
+        window.location.href = '/dashboard.html?onboarding=1';
+      }, 850);
+    }
+
     document.getElementById('btn-sair').addEventListener('click', async () => {
       await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
       window.location.href = '/login.html';

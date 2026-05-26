@@ -1930,6 +1930,7 @@
     let _company = {
       company_name: 'Central Simples',
       logo_path: null,
+      logo_data_url: '',
       pix_key: '',
       pix_receiver_name: '',
       pix_message_suffix: '',
@@ -1942,6 +1943,18 @@
     function preencherUsuarioMobile(nome) {
       const el = document.getElementById('mobile-nome-usuario');
       if (el) el.textContent = nome || 'usuário';
+    }
+
+    function estaNoOnboarding() {
+      return new URLSearchParams(window.location.search).get('onboarding') === '1';
+    }
+
+    function voltarDashboardAposOnboarding() {
+      if (!estaNoOnboarding()) return false;
+      setTimeout(() => {
+        window.location.href = '/dashboard.html?onboarding=1';
+      }, 850);
+      return true;
     }
 
     function billingHas(feature) {
@@ -3136,8 +3149,9 @@
       document.getElementById('modal-company-name').textContent = _company.company_name || 'Central Simples';
       const img = document.getElementById('modal-company-logo');
       const ph = document.getElementById('modal-company-ph');
-      if (_company.logo_path) {
-        img.src = `/${_company.logo_path}`;
+      const logoSrc = _company.logo_data_url || (_company.logo_path ? `/${_company.logo_path}` : '');
+      if (logoSrc) {
+        img.src = logoSrc;
         img.style.display = 'block';
         ph.style.display = 'none';
       } else {
@@ -3492,7 +3506,7 @@
     // -------------------------------------------------------------------------
     // 9. Salvar, enviar pelo WhatsApp, gerar recorrencia e excluir
     // -------------------------------------------------------------------------
-    async function salvarOrcamento() {
+    async function salvarOrcamento(options = {}) {
       const payload = preencherPayload();
 
       if (!payload.client_name) {
@@ -3546,14 +3560,19 @@
 
       toast(id ? 'Orçamento atualizado com sucesso.' : 'Orçamento criado com sucesso.', 'success');
       await carregarBase();
+      if (!options.skipOnboardingRedirect) {
+        voltarDashboardAposOnboarding();
+      }
       return Number(data.id || id);
     }
 
     async function salvarEEnviar(kind) {
-      const id = await salvarOrcamento();
+      const id = await salvarOrcamento({ skipOnboardingRedirect: true });
       if (!id) return;
       await enviarMensagemRapida(id, kind);
-      fecharModal();
+      if (!voltarDashboardAposOnboarding()) {
+        fecharModal();
+      }
     }
 
     async function obterLinks(id, markSent = false) {

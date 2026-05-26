@@ -553,7 +553,7 @@
 
     function renderCompanyLogo(company) {
       const companyName = company?.company_name || 'Central Simples';
-      const logoUrl = company?.logo_url || '';
+      const logoUrl = company?.logo_url || company?.logo_data_url || '';
       const logo = document.getElementById('brand-logo');
       const initials = document.getElementById('brand-initials');
 

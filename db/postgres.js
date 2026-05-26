@@ -44,12 +44,14 @@ const initStatements = [
     user_id INTEGER DEFAULT NULL,
     company_name TEXT NOT NULL DEFAULT 'Minha Empresa',
     logo_path TEXT DEFAULT NULL,
+    logo_data_url TEXT DEFAULT '',
     pix_key TEXT DEFAULT '',
     pix_receiver_name TEXT DEFAULT '',
     pix_message_suffix TEXT DEFAULT '',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
   )`,
+  `ALTER TABLE company_profile ADD COLUMN IF NOT EXISTS logo_data_url TEXT DEFAULT ''`,
   `INSERT INTO company_profile (id, company_name)
    VALUES (1, 'Central Simples')
    ON CONFLICT (id) DO NOTHING`,
@@ -314,6 +316,17 @@ function shouldReturnId(sql) {
   return /^\s*INSERT\s+INTO\s+/i.test(sql) && !/\sRETURNING\s+/i.test(sql);
 }
 
+function normalizeRowDates(row) {
+  if (!row) return row;
+  const normalized = { ...row };
+  Object.entries(normalized).forEach(([key, value]) => {
+    if (value instanceof Date) {
+      normalized[key] = value.toISOString().slice(0, 19).replace('T', ' ');
+    }
+  });
+  return normalized;
+}
+
 async function ensureReady() {
   if (!initPromise) {
     initPromise = (async () => {
@@ -347,14 +360,14 @@ function normalizeArgs(params, callback) {
 function all(sql, params = [], callback = () => {}) {
   const args = normalizeArgs(params, callback);
   query(sql, args.params)
-    .then((result) => args.callback(null, result.rows))
+    .then((result) => args.callback(null, result.rows.map(normalizeRowDates)))
     .catch((err) => args.callback(err));
 }
 
 function get(sql, params = [], callback = () => {}) {
   const args = normalizeArgs(params, callback);
   query(sql, args.params)
-    .then((result) => args.callback(null, result.rows[0]))
+    .then((result) => args.callback(null, normalizeRowDates(result.rows[0])))
     .catch((err) => args.callback(err));
 }
 

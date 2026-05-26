@@ -92,6 +92,13 @@ function isAllowedLogoFile(file) {
   }
 }
 
+function logoFileToDataUrl(file) {
+  if (!file?.path) return '';
+  const buffer = fs.readFileSync(file.path);
+  const mime = file.mimetype === 'image/png' ? 'image/png' : 'image/jpeg';
+  return `data:${mime};base64,${buffer.toString('base64')}`;
+}
+
 // ----------------------------------------------------------------------------
 // 3. Rotas de leitura e gravacao do perfil da empresa
 // ----------------------------------------------------------------------------
@@ -114,6 +121,7 @@ router.get('/profile', requireAuth, async (req, res) => {
           id: null,
           company_name: '',
           logo_path: null,
+          logo_data_url: '',
           pix_key: '',
           pix_receiver_name: '',
           pix_message_suffix: '',
@@ -163,8 +171,11 @@ router.post('/profile', requireAuth, requireActiveSubscription('configurações 
     );
 
     let logoPath = existing?.logo_path ?? null;
+    let logoDataUrl = existing?.logo_data_url || '';
 
     if (req.file) {
+      logoDataUrl = logoFileToDataUrl(req.file);
+
       // Remove logo antiga deste usuário
       if (existing?.logo_path) {
         const oldFull = path.join(__dirname, '..', existing.logo_path);
@@ -177,11 +188,12 @@ router.post('/profile', requireAuth, requireActiveSubscription('configurações 
       // Atualiza o perfil existente
       await dbRun(
         `UPDATE company_profile
-         SET company_name=?, logo_path=?, pix_key=?, pix_receiver_name=?, pix_message_suffix=?, updated_at=datetime('now')
+         SET company_name=?, logo_path=?, logo_data_url=?, pix_key=?, pix_receiver_name=?, pix_message_suffix=?, updated_at=datetime('now')
          WHERE id=?`,
         [
           company_name.trim(),
           logoPath,
+          logoDataUrl,
           String(pix_key || '').trim(),
           String(pix_receiver_name || '').trim(),
           String(pix_message_suffix || '').trim(),
@@ -191,12 +203,13 @@ router.post('/profile', requireAuth, requireActiveSubscription('configurações 
     } else {
       // Cria novo perfil para este usuário
       await dbRun(
-        `INSERT INTO company_profile (user_id, company_name, logo_path, pix_key, pix_receiver_name, pix_message_suffix)
-         VALUES (?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO company_profile (user_id, company_name, logo_path, logo_data_url, pix_key, pix_receiver_name, pix_message_suffix)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [
           userId,
           company_name.trim(),
           logoPath,
+          logoDataUrl,
           String(pix_key || '').trim(),
           String(pix_receiver_name || '').trim(),
           String(pix_message_suffix || '').trim(),
@@ -210,6 +223,7 @@ router.post('/profile', requireAuth, requireActiveSubscription('configurações 
       data: {
         company_name: company_name.trim(),
         logo_path: logoPath,
+        logo_data_url: logoDataUrl,
         pix_key: String(pix_key || '').trim(),
         pix_receiver_name: String(pix_receiver_name || '').trim(),
         pix_message_suffix: String(pix_message_suffix || '').trim(),
