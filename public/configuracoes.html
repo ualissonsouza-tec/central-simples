@@ -1,15 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 
-<!-- ============================================================
-     CENTRAL SIMPLES — Configurações
-     Gerenciamento do perfil da empresa: nome e logo circular
-     que aparecem no cabeçalho dos PDFs gerados.
-     Requer: cs-shared.css, /api/company/profile
-     ============================================================ -->
-
 <head>
-  <!-- ── Meta e título ─────────────────────────────────────────────────────── -->
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#2563eb" />
@@ -20,24 +13,18 @@
   <link rel="manifest" href="/manifest.json" />
   <title>Central Simples — Configurações</title>
 
-  <!-- ── Fontes ────────────────────────────────────────────────────────────── -->
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
-  <!-- ── Design system compartilhado ──────────────────────────────────────── -->
+
   <link rel="stylesheet" href="/cs-shared.css" />
 
-  <!-- ── Estilos específicos desta página ─────────────────────────────────── -->
-  <style>
-    /* ==========================================================================
-       CONFIGURACOES - CSS LOCAL
-       1. Upload de logo
-       2. Preview visual do PDF
-       3. Responsividade da tela de configuracoes
-       ========================================================================== */
 
-    /* ── Upload de logo — círculo clicável ───────────────────────────────── */
+  <style>
+
+
     .logo-circle {
       width: 96px; height: 96px; border-radius: 50%;
       background: var(--navy-3); border: 2px dashed rgba(37,99,235,.4);
@@ -47,7 +34,7 @@
     .logo-circle:hover { border-color: var(--blue-lt); }
     .logo-circle img   { width: 100%; height: 100%; object-fit: cover; }
 
-    /* ── Preview do PDF ──────────────────────────────────────────────────── */
+
     .preview-card   { background: #fff; border-radius: 10px; overflow: hidden; }
 
     .preview-header {
@@ -138,16 +125,8 @@
 </head>
 
 <body>
-  <!-- =========================================================================
-       CONFIGURACOES - HTML
-       1. Sidebar
-       2. Formulario da empresa e dados Pix
-       3. Preview do PDF e toast
-       ========================================================================= -->
 
-  <!-- ══════════════════════════════════════════════════════════════════════
-       GUARD DE SESSÃO
-       ══════════════════════════════════════════════════════════════════════ -->
+
   <div class="guard-overlay" id="guard">
     <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
       <div class="spinner"></div>
@@ -156,15 +135,12 @@
   </div>
 
 
-  <!-- ══════════════════════════════════════════════════════════════════════
-       LAYOUT PRINCIPAL
-       ══════════════════════════════════════════════════════════════════════ -->
   <div class="app">
 
-    <!-- ── Sidebar / Navegação lateral ───────────────────────────────────── -->
+
     <aside class="sidebar">
 
-      <!-- Logo -->
+
       <a href="/dashboard.html" class="brand-logo sidebar-logo">
         <div class="logo-3d">
           <div class="eye"></div>
@@ -175,7 +151,7 @@
       </a>
       <div class="mobile-user-greeting">Seja bem-vindo, <span id="mobile-nome-usuario">usuário</span></div>
 
-      <!-- Menu de navegação -->
+
       <nav style="display:flex;flex-direction:column;gap:2px;">
         <a href="/dashboard.html" class="nav-item">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -202,7 +178,7 @@
         </a>
       </nav>
 
-      <!-- Botão de logout -->
+
       <div class="sidebar-footer">
         <button class="nav-item" id="btn-sair">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -214,38 +190,37 @@
         </button>
       </div>
 
-    </aside><!-- /sidebar -->
+    </aside>
 
 
-    <!-- ── Conteúdo principal ─────────────────────────────────────────────── -->
     <main class="main fade-up" style="max-width:900px;">
 
-      <!-- Cabeçalho da página -->
+
       <div class="page-header">
         <h1>Configurações</h1>
         <p>Dados da empresa que aparecem no cabeçalho de todos os PDFs gerados.</p>
       </div>
 
-      <!-- Layout em 2 colunas: formulário + preview -->
+
       <div class="settings-grid">
 
-        <!-- ── Coluna esquerda: Formulário de perfil ─────────────────────── -->
+
         <div>
 
-          <!-- Card: Perfil da empresa -->
+
           <div class="card">
             <p class="card-title">Perfil da empresa</p>
 
             <form id="form-perfil" enctype="multipart/form-data">
 
-              <!-- Upload de logo -->
+
               <div style="margin-bottom:1.5rem;">
                 <label style="font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:.75rem;">
                   Logo (circular no PDF)
                 </label>
                 <div class="logo-upload-row">
 
-                  <!-- Círculo clicável de preview da logo -->
+
                   <div class="logo-circle" id="logo-circle"
                     onclick="document.getElementById('input-logo').click()"
                     title="Clique para trocar a logo">
@@ -258,7 +233,7 @@
                     </svg>
                   </div>
 
-                  <!-- Área de drag & drop -->
+
                   <div>
                     <div class="drop-zone" style="padding:.75rem 1rem;"
                       onclick="document.getElementById('input-logo').click()">
@@ -273,7 +248,7 @@
                 </div>
               </div>
 
-              <!-- Campo: Nome da empresa -->
+
               <div class="field">
                 <label for="company-name">Nome da empresa *</label>
                 <input id="company-name" type="text" name="company_name"
@@ -306,7 +281,7 @@
                 </p>
               </div>
 
-              <!-- Botão salvar -->
+
               <button type="submit" class="btn btn-primary" id="btn-salvar" style="width:100%;">
                 <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
@@ -317,9 +292,9 @@
               </button>
 
             </form>
-          </div><!-- /card perfil -->
+          </div>
 
-          <!-- Card: Atalho para criar orçamentos -->
+
           <div class="card" style="background:rgba(37,211,102,.05);border-color:rgba(37,211,102,.15);margin-top:1rem;">
             <p class="card-title" style="color:var(--wapp);">Criar e enviar orçamentos</p>
             <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem;">
@@ -331,12 +306,11 @@
               </svg>
               Ir para Orçamentos
             </a>
-          </div><!-- /card atalho -->
+          </div>
 
-        </div><!-- /coluna esquerda -->
+        </div>
 
 
-        <!-- ── Coluna direita: Preview do PDF ─────────────────────────────── -->
         <div class="card">
           <p class="card-title">Preview do PDF</p>
           <p style="font-size:.8rem;color:var(--muted);margin-bottom:1rem;">
@@ -345,7 +319,7 @@
 
           <div class="preview-card">
 
-            <!-- Cabeçalho azul escuro (espelho do PDF real) -->
+
             <div class="preview-header">
               <div class="preview-logo-circle" id="prev-logo-wrap">
                 <img id="prev-logo-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;" />
@@ -362,7 +336,7 @@
               </div>
             </div>
 
-            <!-- Corpo do preview (dados fictícios de exemplo) -->
+
             <div class="preview-body">
               <div style="font-size:.65rem;color:#fff;text-transform:uppercase;letter-spacing:.08em;background:#1e3a5f;border-radius:4px;padding:4px 8px;margin-bottom:8px;">Cliente</div>
               <div class="preview-row">
@@ -389,34 +363,24 @@
               </div>
             </div>
 
-          </div><!-- /preview-card -->
-        </div><!-- /coluna direita -->
+          </div>
+        </div>
 
-      </div><!-- /grid -->
+      </div>
 
-    </main><!-- /main -->
+    </main>
 
-  </div><!-- /app -->
+  </div>
 
 
-  <!-- ── Toast de feedback ─────────────────────────────────────────────────── -->
   <div class="toast" id="toast">
     <div class="dot"></div>
     <span id="toast-msg"></span>
   </div>
 
 
-  <!-- ══════════════════════════════════════════════════════════════════════
-       JAVASCRIPT
-       ══════════════════════════════════════════════════════════════════════ -->
   <script>
-    // =========================================================================
     // CONFIGURACOES - JS
-    // 1. Autenticacao e carregamento do perfil
-    // 2. Toast e preview em tempo real
-    // 3. Upload/validacao de logo
-    // 4. Salvamento do perfil e logout
-    // =========================================================================
 
     function preencherUsuarioMobile(nome) {
       const el = document.getElementById('mobile-nome-usuario');
@@ -468,10 +432,9 @@
       }
     })();
 
-
     // ── 2. FUNÇÕES UTILITÁRIAS ────────────────────────────────────────────────
 
-    /** Exibe toast de feedback */
+
     function toast(msg, type = 'success') {
       const t = document.getElementById('toast');
       t.className = `toast ${type}`;
@@ -480,10 +443,9 @@
       setTimeout(() => t.classList.remove('show'), 3500);
     }
 
-
     // ── 3. PREVIEW EM TEMPO REAL ──────────────────────────────────────────────
 
-    /** Atualiza o nome e as iniciais no preview do PDF */
+
     function atualizarPreview(nome) {
       document.getElementById('prev-company-name').textContent = nome || 'Nome da Empresa';
       const initials = (nome || 'CS').split(' ').slice(0, 2)
@@ -496,10 +458,9 @@
       atualizarPreview(this.value);
     });
 
-
     // ── 4. PREVIEW E UPLOAD DE LOGO ───────────────────────────────────────────
 
-    /** Exibe a logo no círculo e no preview do PDF */
+
     function mostrarLogoPreview(src) {
       // Atualiza círculo de upload
       document.getElementById('logo-img').src = src;
@@ -514,7 +475,7 @@
       ini.style.display = 'none';
     }
 
-    /** Valida e processa o arquivo de logo selecionado */
+
     function processarArquivo(file) {
       if (!['image/png', 'image/jpeg'].includes(file.type)) {
         toast('Use PNG ou JPG.', 'error');
@@ -555,7 +516,6 @@
         processarArquivo(file);
       }
     });
-
 
     // ── 5. SUBMIT DO FORMULÁRIO DE PERFIL ────────────────────────────────────
     document.getElementById('form-perfil').addEventListener('submit', async e => {
@@ -600,7 +560,6 @@
           Salvar configurações`;
       }
     });
-
 
     // ── 6. LOGOUT ─────────────────────────────────────────────────────────────
     function estaNoOnboarding() {

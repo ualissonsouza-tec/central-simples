@@ -1,15 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 
-<!-- ============================================================
-     CENTRAL SIMPLES — Login / Cadastro
-     Tela de acesso com abas: Entrar e Criar conta.
-     Funcionalidades: toggle de senha, modal esqueci senha,
-     prevenção de autopreenchimento do browser.
-     ============================================================ -->
-
 <head>
-  <!-- ── Meta, PWA e título ────────────────────────────────────────────────── -->
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#2563eb" />
@@ -20,22 +13,15 @@
   <link rel="manifest" href="/manifest.json" />
   <title>Central Simples — Acesso</title>
 
-  <!-- ── Fontes ────────────────────────────────────────────────────────────── -->
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
-  <!-- ── Estilos ───────────────────────────────────────────────────────────── -->
-  <style>
-    /* ==========================================================================
-       LOGIN - CSS LOCAL
-       1. Base visual e painel da marca
-       2. Formularios de login/cadastro
-       3. Recuperacao de senha
-       4. Animacao mobile da marca
-       ========================================================================== */
 
-    /* ── Reset e variáveis globais ─────────────────────────────────────────── */
+  <style>
+
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -60,7 +46,6 @@
       background: var(--navy);
       color: var(--text);
     }
-/* ===== NOVA LOGO 3D ===== */
 
 .logo-3d {
   width: 48px;
@@ -71,7 +56,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  box-shadow: 
+  box-shadow:
     0 10px 25px rgba(0,0,0,0.4),
     inset 0 2px 6px rgba(255,255,255,0.18);
   animation: floatLogo 3s ease-in-out infinite;
@@ -88,22 +73,20 @@
 
 .eye::after { content: none; }
 
-/* animação flutuando */
 @keyframes floatLogo {
   0% { transform: translateY(0px); }
   50% { transform: translateY(-6px); }
   100% { transform: translateY(0px); }
 }
 
-/* piscar */
 @keyframes blink {
   0%, 90%, 100% { transform: scaleY(1); }
   95% { transform: scaleY(0.1); }
 }
-    /* ── Layout: 2 colunas (marca + formulário) ────────────────────────────── */
+
     .layout { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; }
 
-    /* ── Coluna esquerda — Marca ───────────────────────────────────────────── */
+
     .brand {
       background: var(--navy-2);
       display: flex;
@@ -114,7 +97,7 @@
       overflow: hidden;
     }
 
-    /* Grade de quadrados decorativa */
+
     .brand::before {
       content: '';
       position: absolute;
@@ -126,7 +109,7 @@
       pointer-events: none;
     }
 
-    /* Círculo de luz no canto superior */
+
     .brand::after {
       content: '';
       position: absolute;
@@ -137,7 +120,7 @@
       pointer-events: none;
     }
 
-    /* Logo */
+
     .brand-logo { display: flex; align-items: center; gap: 14px; position: relative; z-index: 1; }
 
     .brand-icon {
@@ -156,7 +139,7 @@
       color: var(--sky); letter-spacing: .12em; text-transform: uppercase;
     }
 
-    /* Corpo da marca */
+
     .brand-body { position: relative; z-index: 1; }
 
     .brand-headline {
@@ -189,11 +172,11 @@
       z-index: 1;
     }
 
-    /* ── Coluna direita — Formulários ──────────────────────────────────────── */
+
     .form-side { display: flex; align-items: center; justify-content: center; padding: 3rem 2rem; }
     .form-box  { width: 100%; max-width: 400px; }
 
-    /* Abas: Entrar / Criar conta */
+
     .tabs {
       display: flex; gap: 2px; margin-bottom: 2rem;
       background: var(--navy-2); border-radius: var(--radius); padding: 4px;
@@ -206,7 +189,7 @@
     }
     .tab-btn.active { background: var(--navy-3, #1a2f4a); color: #fff; }
 
-    /* Painéis das abas */
+
     .form-panel        { display: none; animation: fadeUp .3s ease both; }
     .form-panel.active { display: block; }
 
@@ -218,7 +201,7 @@
     .form-title { font-family: 'DM Serif Display', serif; font-size: 1.75rem; color: #fff; margin-bottom: .3rem; }
     .form-sub   { font-size: .875rem; color: var(--muted); margin-bottom: 1.75rem; }
 
-    /* ── Campos de formulário ──────────────────────────────────────────────── */
+
     .field           { margin-bottom: 1.1rem; }
     .field label     { display: block; font-size: .75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: .4rem; }
     .field-wrap      { position: relative; }
@@ -251,7 +234,7 @@
     .field input::placeholder  { color: rgba(148,163,184,.4); }
     .field input:focus         { border-color: var(--blue-lt); box-shadow: 0 0 0 3px rgba(59,130,246,.18); }
 
-    /* ── Links auxiliares ──────────────────────────────────────────────────── */
+
     .link-btn {
       background: none; border: none; color: var(--sky);
       font-size: .83rem; cursor: pointer; padding: 0;
@@ -288,7 +271,7 @@
       margin-bottom: 1.25rem;
     }
 
-    /* ── Botão de submit ───────────────────────────────────────────────────── */
+
     .btn-submit {
       width: 100%; background: var(--blue); color: #fff;
       border: none; border-radius: var(--radius); padding: 13px;
@@ -301,7 +284,7 @@
     .btn-submit:active                { transform: scale(.98); }
     .btn-submit:disabled              { opacity: .55; cursor: not-allowed; }
 
-    /* ── Spinner de carregamento ───────────────────────────────────────────── */
+
     .spin {
       display: none; width: 16px; height: 16px;
       border: 2px solid rgba(255,255,255,.3); border-top-color: #fff;
@@ -309,7 +292,7 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Alertas de erro / sucesso ─────────────────────────────────────────── */
+
     .alert {
       border-radius: var(--radius); padding: 10px 14px;
       font-size: .85rem; margin-bottom: 1rem; display: none;
@@ -318,7 +301,7 @@
     .alert.error   { background: rgba(220,38,38,.12);  border: 1px solid rgba(220,38,38,.3);  color: var(--error); }
     .alert.success { background: rgba(134,239,172,.1); border: 1px solid rgba(134,239,172,.3); color: var(--success); }
 
-    /* ── Modal: Esqueci minha senha ────────────────────────────────────────── */
+
     .modal-bg {
       position: fixed; inset: 0; z-index: 100;
       background: rgba(0,0,0,.6); backdrop-filter: blur(4px);
@@ -340,7 +323,7 @@
     }
     .modal-close-btn:hover { background: rgba(255,255,255,.05); color: var(--text); }
 
-    /* ── Hint de plano ─────────────────────────────────────────────────────── */
+
     .plan-hint {
       margin-top: 1.5rem;
       background: rgba(201,168,76,.07); border: 1px solid rgba(201,168,76,.2);
@@ -349,7 +332,7 @@
     }
     .plan-hint strong { color: var(--gold); }
 
-    /* ── Responsivo — oculta a coluna de marca em telas pequenas ──────────── */
+
     @media (max-width: 900px) {
       .layout { grid-template-columns: 1fr; }
 
@@ -568,17 +551,9 @@
 </head>
 
 <body>
-<!-- =========================================================================
-     LOGIN - HTML
-     1. Vitrine da marca
-     2. Abas entrar/criar conta
-     3. Formularios e modal de recuperacao
-     ========================================================================= -->
 <div class="layout">
 
-  <!-- ════════════════════════════════════════════════════════════════════════
-       COLUNA ESQUERDA — MARCA
-       ════════════════════════════════════════════════════════════════════════ -->
+
   <aside class="brand">
 
     <div class="mobile-brand-showcase" aria-hidden="true">
@@ -604,20 +579,20 @@
       </div>
     </div>
 
-    <!-- Logo da marca -->
-    
+
+
     <div class="brand-logo">
       <div class="logo-3d">
         <div class="eye"></div>
       </div>
-    
+
       <div class="brand-name">
         Central Simples
         <span>Gestão para autônomos</span>
       </div>
     </div>
 
-    <!-- Texto e benefícios -->
+
     <div class="brand-body">
       <h1 class="brand-headline">Gestão que <em>realmente</em><br/>cabe na sua rotina.</h1>
       <p class="brand-sub">Clientes, orçamentos e cobranças num único painel. Envie mensagens profissionais pelo WhatsApp com um clique.</p>
@@ -628,26 +603,22 @@
       </div>
     </div>
 
-    <!-- Rodapé da marca -->
+
     <p class="brand-footer">Central Simples v1.0 · Sistema Integrado de Gestão</p>
 
-  </aside><!-- /brand -->
+  </aside>
 
 
-  <!-- ════════════════════════════════════════════════════════════════════════
-       COLUNA DIREITA — FORMULÁRIOS
-       ════════════════════════════════════════════════════════════════════════ -->
   <main class="form-side">
     <div class="form-box">
 
-      <!-- Abas de navegação: Entrar / Criar conta -->
+
       <div class="tabs">
         <button class="tab-btn active" onclick="mudarAba('login')">Entrar</button>
         <button class="tab-btn"        onclick="mudarAba('cadastro')">Criar conta</button>
       </div>
 
 
-      <!-- ── Painel: Login ────────────────────────────────────────────────── -->
       <div class="form-panel active" id="painel-login">
         <h2 class="form-title">Seja Bem-vindo</h2>
         <p class="form-sub">Acesse sua conta para continuar.</p>
@@ -656,11 +627,11 @@
 
         <form id="form-login" novalidate autocomplete="off">
 
-          <!-- Campos honeypot: evitam autopreenchimento do browser -->
+
           <input type="text"     name="fake_user" style="display:none;" tabindex="-1" aria-hidden="true" />
           <input type="password" name="fake_pass" style="display:none;" tabindex="-1" aria-hidden="true" />
 
-          <!-- Campo: Usuário -->
+
           <div class="field">
             <label for="login-user">Usuário</label>
             <div class="field-wrap">
@@ -673,7 +644,7 @@
             </div>
           </div>
 
-          <!-- Campo: Senha com botão de visualização -->
+
           <div class="field">
             <label for="login-pass">Senha</label>
             <div class="field-wrap">
@@ -696,7 +667,7 @@
             </div>
           </div>
 
-          <!-- Link: Esqueci minha senha -->
+
           <div class="row-between">
             <button type="button" class="link-btn"
               onclick="document.getElementById('modal-esqueci').classList.add('open')">
@@ -705,17 +676,16 @@
       </button>
           </div>
 
-          <!-- Botão de submit -->
+
           <button type="submit" class="btn-submit" id="btn-login">
             <span id="btn-login-txt">Entrar no painel</span>
             <span class="spin" id="btn-login-spin"></span>
           </button>
 
         </form>
-      </div><!-- /painel-login -->
+      </div>
 
 
-      <!-- ── Painel: Cadastro ─────────────────────────────────────────────── -->
       <div class="form-panel" id="painel-cadastro">
         <h2 class="form-title">Criar conta</h2>
         <p class="form-sub">Crie sua conta gratuita para começar.</p>
@@ -725,7 +695,7 @@
 
         <form id="form-cadastro" novalidate autocomplete="off">
 
-          <!-- Campo: Usuário -->
+
           <div class="field">
             <label for="cad-user">Usuário *</label>
             <div class="field-wrap">
@@ -738,7 +708,7 @@
             </div>
           </div>
 
-          <!-- Campo: E-mail -->
+
           <div class="field">
             <label for="cad-email">E-mail *</label>
             <div class="field-wrap">
@@ -751,7 +721,7 @@
             </div>
           </div>
 
-          <!-- Campo: CPF ou CNPJ -->
+
           <div class="field">
             <label for="cad-document">CPF ou CNPJ *</label>
             <div class="field-wrap">
@@ -766,7 +736,7 @@
             </div>
           </div>
 
-          <!-- Campo: Senha com botão de visualização -->
+
           <div class="field">
             <label for="cad-pass">
               Senha *
@@ -792,7 +762,7 @@
             </div>
           </div>
 
-          <!-- Botão de submit -->
+
           <label class="privacy-accept">
             <input id="cad-privacy" type="checkbox" required />
             <span>
@@ -813,17 +783,13 @@
           <strong>Plano gratuito:</strong> acesso básico às funcionalidades.
           Planos pagos com recursos completos em breve.
         </div>
-      </div><!-- /painel-cadastro -->
+      </div>
 
-    </div><!-- /form-box -->
-  </main><!-- /form-side -->
+    </div>
+  </main>
 
-</div><!-- /layout -->
+</div>
 
-
-<!-- ════════════════════════════════════════════════════════════════════════
-     MODAL — Esqueci minha senha
-     ════════════════════════════════════════════════════════════════════════ -->
 <div class="modal-bg" id="modal-esqueci">
   <div class="modal-box">
     <h3>Recuperar senha</h3>
@@ -852,20 +818,10 @@
       Cancelar
     </button>
   </div>
-</div><!-- /modal-esqueci -->
+</div>
 
-
-<!-- ════════════════════════════════════════════════════════════════════════
-     JAVASCRIPT
-     ════════════════════════════════════════════════════════════════════════ -->
 <script>
-  // ===========================================================================
   // LOGIN - JS
-  // 1. Abas, senha visivel e feedback
-  // 2. Validacao CPF/CNPJ e identificador do aparelho
-  // 3. Login, cadastro e recuperacao de senha
-  // 4. Ajustes de autofill e PWA
-  // ===========================================================================
 
   // ── 1. NAVEGAÇÃO ENTRE ABAS ───────────────────────────────────────────────
   function mudarAba(aba) {
@@ -875,7 +831,6 @@
     document.getElementById('painel-login').classList.toggle('active',    aba === 'login');
     document.getElementById('painel-cadastro').classList.toggle('active', aba === 'cadastro');
   }
-
 
   // ── 2. TOGGLE DE VISIBILIDADE DA SENHA ───────────────────────────────────
   function toggleSenha(inputId, eyeOpenId, eyeOffId) {
@@ -896,24 +851,23 @@
     toggleSenha('cad-pass', 'eye-open-cad', 'eye-off-cad')
   );
 
-
   // ── 3. FUNÇÕES UTILITÁRIAS DE UI ──────────────────────────────────────────
 
-  /** Ativa/desativa o estado de carregamento de um botão */
+
   function setLoading(btnTxtId, btnSpinId, btnId, ativo, textoNormal) {
     document.getElementById(btnTxtId).textContent  = ativo ? 'Aguarde…' : textoNormal;
     document.getElementById(btnSpinId).style.display = ativo ? 'block' : 'none';
     document.getElementById(btnId).disabled         = ativo;
   }
 
-  /** Exibe uma mensagem de alerta */
+
   function showAlert(id, msg) {
     const el = document.getElementById(id);
     el.textContent = msg;
     el.classList.add('show');
   }
 
-  /** Oculta um ou mais alertas */
+
   function hideAlerts(...ids) {
     ids.forEach(id => {
       const el = document.getElementById(id);
@@ -922,10 +876,6 @@
     });
   }
 
-
-  // ---------------------------------------------------------------------------
-  // 2. Validacao CPF/CNPJ e identificador do aparelho
-  // ---------------------------------------------------------------------------
   function onlyDigits(value) {
     return String(value || '').replace(/\D/g, '');
   }
@@ -1010,9 +960,6 @@
     event.target.value = formatCpfCnpj(event.target.value);
   });
 
-  // ---------------------------------------------------------------------------
-  // 3. Login, cadastro e recuperacao de senha
-  // ---------------------------------------------------------------------------
   document.getElementById('form-login').addEventListener('submit', async (e) => {
     e.preventDefault();
     hideAlerts('login-erro');
@@ -1048,7 +995,6 @@
       setLoading('btn-login-txt', 'btn-login-spin', 'btn-login', false, 'Entrar no painel');
     }
   });
-
 
   document.getElementById('form-cadastro').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -1107,7 +1053,6 @@
     }
   });
 
-
   // ── 6. RECUPERAÇÃO DE SENHA ───────────────────────────────────────────────
   async function enviarRecuperacao() {
     hideAlerts('esqueci-erro', 'esqueci-ok');
@@ -1145,10 +1090,6 @@
     if (e.target === this) this.classList.remove('open');
   });
 
-
-  // ---------------------------------------------------------------------------
-  // 4. Ajustes de autofill e registro do PWA
-  // ---------------------------------------------------------------------------
   // Impede que o browser restaure senhas salvas automaticamente
   window.addEventListener('load', () => {
     ['login-user', 'login-pass', 'cad-user', 'cad-email', 'cad-document', 'cad-pass'].forEach(id => {
@@ -1156,7 +1097,6 @@
       if (el) el.value = '';
     });
   });
-
 
   // ── 8. REGISTRO DO SERVICE WORKER (PWA) ──────────────────────────────────
   if ('serviceWorker' in navigator) {

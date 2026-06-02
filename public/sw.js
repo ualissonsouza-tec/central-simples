@@ -1,11 +1,6 @@
-// ============================================================================
 // SERVICE WORKER
 // Cache do PWA, atualizacao offline basica e abertura de notificacoes push.
-// ============================================================================
 
-// ----------------------------------------------------------------------------
-// 1. Lista de arquivos cacheados
-// ----------------------------------------------------------------------------
 const CACHE = 'cs-v8';
 const ASSETS = [
   '/',
@@ -24,9 +19,6 @@ const ASSETS = [
   '/icon-512.png',
 ];
 
-// ----------------------------------------------------------------------------
-// 2. Instalacao e ativacao do cache
-// ----------------------------------------------------------------------------
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE).then((cache) => cache.addAll(ASSETS)).catch(() => {})
@@ -43,9 +35,6 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// ----------------------------------------------------------------------------
-// 3. Estrategia de fetch: rede primeiro, cache como fallback
-// ----------------------------------------------------------------------------
 self.addEventListener('fetch', (event) => {
   if (event.request.url.includes('/api/')) return;
   if (event.request.method !== 'GET') return;
@@ -61,9 +50,6 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// ----------------------------------------------------------------------------
-// 4. Push notification e clique no aviso
-// ----------------------------------------------------------------------------
 self.addEventListener('push', (event) => {
   let payload = {
     title: 'Central Simples',

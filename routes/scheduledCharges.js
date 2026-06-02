@@ -1,11 +1,6 @@
-// ============================================================================
 // ROTAS DE COBRANCAS PROGRAMADAS
 // Permite cadastrar, listar, ativar e remover regras de cobranca recorrente.
-// ============================================================================
 
-// ----------------------------------------------------------------------------
-// 1. Imports, router e protecao de plano
-// ----------------------------------------------------------------------------
 const express = require('express');
 const db = require('../db/database');
 const requireAuth = require('../middleware/requireAuth');
@@ -16,9 +11,6 @@ const router = express.Router();
 router.use(requireAuth);
 router.use(requireFeature('scheduled_charges', 'cobranças automáticas'));
 
-// ----------------------------------------------------------------------------
-// 2. Helpers de banco, usuario e datas
-// ----------------------------------------------------------------------------
 function dbGet(sql, params = []) {
   return new Promise((resolve, reject) => {
     db.get(sql, params, (err, row) => (err ? reject(err) : resolve(row)));
@@ -61,9 +53,6 @@ function addDays(base, amount) {
   return date.toISOString().slice(0, 10);
 }
 
-// ----------------------------------------------------------------------------
-// 3. Normalizacao da agenda de disparo
-// ----------------------------------------------------------------------------
 function nextWeeklyDate(weekday, baseDate = todayIso()) {
   const base = new Date(`${baseDate}T12:00:00`);
   const current = base.getDay();
@@ -97,9 +86,6 @@ function normalizeSchedule(input) {
   };
 }
 
-// ----------------------------------------------------------------------------
-// 4. CRUD das regras de cobranca programada
-// ----------------------------------------------------------------------------
 router.get('/', async (req, res) => {
   try {
     const rows = await dbAll(

@@ -1,15 +1,10 @@
-// ============================================================================
 // BANCO DE DADOS
 // Usa SQLite no ambiente local e PostgreSQL/Neon quando DATABASE_URL existir.
-// ============================================================================
 
 if (process.env.DATABASE_URL) {
   module.exports = require('./postgres');
 } else {
 
-// ----------------------------------------------------------------------------
-// 1. Imports e caminho do arquivo do banco
-// ----------------------------------------------------------------------------
 const sqlite3 = require('sqlite3').verbose();
 const fs = require('fs');
 const path = require('path');
@@ -31,9 +26,6 @@ const db = new sqlite3.Database(DB_PATH, (err) => {
   console.log('[DB] Conectado em:', DB_PATH);
 });
 
-// ----------------------------------------------------------------------------
-// 2. Helper de migracao incremental
-// ----------------------------------------------------------------------------
 function addCol(table, col, def, done = () => {}) {
   db.all(`PRAGMA table_info(${table})`, (err, cols) => {
     if (err || !cols) {
@@ -80,9 +72,6 @@ function createIndex(sql) {
   });
 }
 
-// ----------------------------------------------------------------------------
-// 3. Configuracao, schema inicial, migracoes e indices
-// ----------------------------------------------------------------------------
 db.serialize(() => {
   db.run('PRAGMA foreign_keys = ON');
   db.run('PRAGMA journal_mode = WAL');
@@ -368,8 +357,5 @@ db.serialize(() => {
   }, 200);
 });
 
-// ----------------------------------------------------------------------------
-// 4. Export da conexao compartilhada
-// ----------------------------------------------------------------------------
 module.exports = db;
 }

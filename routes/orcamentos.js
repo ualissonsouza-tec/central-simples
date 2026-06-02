@@ -1,12 +1,7 @@
 ﻿const crypto = require('crypto');
-// ============================================================================
 // ROTAS DE ORCAMENTOS
 // Centraliza CRUD, PDF, modelos, link publico, recorrencia e eventos automaticos.
-// ============================================================================
 
-// ----------------------------------------------------------------------------
-// 1. Imports, router e acesso ao banco
-// ----------------------------------------------------------------------------
 const express = require('express');
 const db = require('../db/database');
 const requireAuth = require('../middleware/requireAuth');
@@ -17,9 +12,6 @@ const { getAppOrigin, publicError } = require('../lib/security');
 const router = express.Router();
 router.use(requireAuth);
 
-// ----------------------------------------------------------------------------
-// 2. Helpers genericos de banco, datas e normalizacao
-// ----------------------------------------------------------------------------
 function dbGet(sql, params = []) {
   return new Promise((resolve, reject) => {
     db.get(sql, params, (err, row) => (err ? reject(err) : resolve(row)));
@@ -151,9 +143,6 @@ function newToken() {
   return crypto.randomBytes(16).toString('hex');
 }
 
-// ----------------------------------------------------------------------------
-// 3. Helpers de empresa, token publico e dados relacionados
-// ----------------------------------------------------------------------------
 async function getCompanyByUser(userId) {
   return (
     (await dbGet('SELECT * FROM company_profile WHERE user_id IS ? LIMIT 1', [userId])) || {
@@ -179,9 +168,6 @@ async function ensureApprovalTokenById(id, userId) {
   return token;
 }
 
-// ----------------------------------------------------------------------------
-// 4. Clientes, modelos, notas e itens do orcamento
-// ----------------------------------------------------------------------------
 async function upsertClient(payload, userId, existingClientId = null) {
   const name = String(payload.client_name || '').trim();
   if (!name) throw new Error('client_name e obrigatorio.');
@@ -345,9 +331,6 @@ async function fetchOrcamentoBundle(id, userId) {
   };
 }
 
-// ----------------------------------------------------------------------------
-// 5. Criacao e edicao principal do orcamento
-// ----------------------------------------------------------------------------
 async function createOrcamento(payload, userId) {
   const clientId = await upsertClient(payload, userId);
   await saveClientNoteIfNeeded(clientId, payload.client_note, userId);
@@ -450,9 +433,6 @@ async function updateOrcamento(id, payload, userId) {
   return { id, clientId };
 }
 
-// ----------------------------------------------------------------------------
-// 6. Rotas de modelos salvos
-// ----------------------------------------------------------------------------
 router.get('/templates', requireFeature('templates', 'modelos de orçamento'), async (req, res) => {
   try {
     const rows = await dbAll(
@@ -509,9 +489,6 @@ router.delete('/templates/:templateId', requireFeature('templates', 'modelos de 
   }
 });
 
-// ----------------------------------------------------------------------------
-// 7. Compartilhamento, duplicacao, recorrencia e eventos automaticos
-// ----------------------------------------------------------------------------
 router.post('/:id/share-links', requireActiveSubscription('envio de orçamentos pelo WhatsApp'), async (req, res) => {
   try {
     const token = await ensureApprovalTokenById(req.params.id, uid(req));
@@ -730,9 +707,6 @@ router.post('/:id/automation-event', requireFeature('automations', 'automações
   }
 });
 
-// ----------------------------------------------------------------------------
-// 8. PDFs, recibos e mudanca de status
-// ----------------------------------------------------------------------------
 router.get('/:id/pdf', requireActiveSubscription('PDF de orçamento'), async (req, res) => {
   try {
     const bundle = await fetchOrcamentoBundle(req.params.id, uid(req));
@@ -809,9 +783,6 @@ router.put('/:id/status', requireActiveSubscription('atualização de status'), 
   }
 });
 
-// ----------------------------------------------------------------------------
-// 9. CRUD principal usado pela tela de orcamentos
-// ----------------------------------------------------------------------------
 router.get('/', async (req, res) => {
   try {
     const rows = await dbAll(

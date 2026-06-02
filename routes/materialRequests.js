@@ -1,11 +1,6 @@
-// ============================================================================
 // ROTAS DE PLANEJAMENTO DE MATERIAIS
 // Regras por obra para calcular total, saldo restante e pedidos parciais.
-// ============================================================================
 
-// ----------------------------------------------------------------------------
-// 1. Imports, router e protecao de plano
-// ----------------------------------------------------------------------------
 const express = require('express');
 const db = require('../db/database');
 const requireAuth = require('../middleware/requireAuth');
@@ -23,9 +18,6 @@ const router = express.Router();
 router.use(requireAuth);
 router.use(requireFeature('material_planning', 'planejamento de materiais da obra'));
 
-// ----------------------------------------------------------------------------
-// 2. Helpers de banco, usuario e validacao
-// ----------------------------------------------------------------------------
 function dbGet(sql, params = []) {
   return new Promise((resolve, reject) => {
     db.get(sql, params, (err, row) => (err ? reject(err) : resolve(row)));
@@ -117,9 +109,6 @@ function sendRouteError(res, err) {
   });
 }
 
-// ----------------------------------------------------------------------------
-// 3. CRUD das regras de material por obra
-// ----------------------------------------------------------------------------
 router.get('/', async (req, res) => {
   try {
     const rows = await dbAll(

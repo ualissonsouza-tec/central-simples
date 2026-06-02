@@ -1,8 +1,6 @@
 ﻿// routes/clients.js
-// ============================================================================
 // ROTAS DE CLIENTES
 // Lista, cria e atualiza clientes usados pelos orcamentos e historico.
-// ============================================================================
 
 const express     = require('express');
 const db          = require('../db/database');
@@ -13,9 +11,6 @@ const { publicError } = require('../lib/security');
 const router = express.Router();
 router.use(requireAuth);
 
-// ----------------------------------------------------------------------------
-// 1. Helpers de banco e usuario
-// ----------------------------------------------------------------------------
 function dbAll(sql, p = []) {
   return new Promise((ok, er) => db.all(sql, p, (e, r) => e ? er(e) : ok(r)));
 }
@@ -28,9 +23,6 @@ function dbGet(sql, p = []) {
 function uid(req) { return req.user?.userId ?? null; }
 
 // GET /api/clients â€” lista clientes do usuÃ¡rio logado
-// ----------------------------------------------------------------------------
-// 2. Lista de clientes e historico individual
-// ----------------------------------------------------------------------------
 router.get('/', async (req, res) => {
   try {
     const rows = await dbAll(

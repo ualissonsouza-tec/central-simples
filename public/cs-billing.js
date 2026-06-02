@@ -1,14 +1,9 @@
-// ============================================================================
 // GUARDA DE ASSINATURA NO FRONTEND
 // Redireciona para planos/pagamento quando trial ou plano nao permitem acesso.
-// ============================================================================
 
 (function setupCentralSimplesBilling() {
   const openPages = new Set(['/login.html', '/reset-password.html', '/aprovacao.html', '/planos.html', '/pagamento.html']);
 
-  // --------------------------------------------------------------------------
-  // 1. Rotas abertas e consulta do status
-  // --------------------------------------------------------------------------
   function currentPath() {
     return window.location.pathname || '/dashboard.html';
   }
@@ -26,9 +21,6 @@
     return res.json();
   }
 
-  // --------------------------------------------------------------------------
-  // 2. Bloqueio visual por assinatura
-  // --------------------------------------------------------------------------
   async function guardBilling() {
     try {
       const data = await fetchBillingStatus();

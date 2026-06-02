@@ -1,7 +1,5 @@
-// ============================================================================
 // ROTAS DE NOTIFICACOES
 // Alimenta o sino do dashboard e registra dispositivos para push do PWA.
-// ============================================================================
 
 const express = require('express');
 const db = require('../db/database');

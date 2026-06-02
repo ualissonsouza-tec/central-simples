@@ -14,13 +14,6 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/cs-shared.css" />
   <style>
-    /* ==========================================================================
-       PLANOS - CSS LOCAL
-       1. Hero e barra superior
-       2. Cards de planos
-       3. Alertas de trial/bloqueio
-       4. Mobile
-       ========================================================================== */
 
     body {
       min-height: 100vh;
@@ -421,12 +414,6 @@
   </style>
 </head>
 <body>
-  <!-- =========================================================================
-       PLANOS - HTML
-       1. Topbar da marca
-       2. Mensagem do trial
-       3. Cards dos planos e acoes
-       ========================================================================= -->
   <main class="pricing-shell">
     <div class="pricing-topbar">
       <a class="pricing-logo" href="/dashboard.html">
@@ -468,12 +455,7 @@
   <div class="toast" id="toast"><span id="toast-msg"></span></div>
 
   <script>
-    // =========================================================================
     // PLANOS - JS
-    // 1. Carrega status de assinatura
-    // 2. Renderiza planos
-    // 3. Direciona para checkout
-    // =========================================================================
 
     let _plans = [];
     let _billing = null;

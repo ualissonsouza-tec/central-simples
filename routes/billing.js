@@ -1,7 +1,5 @@
-// ============================================================================
 // ROTAS DE PLANOS E PAGAMENTOS
 // Entrega planos, status de assinatura, checkout e historico de pagamentos.
-// ============================================================================
 
 const express = require('express');
 const requireAuth = require('../middleware/requireAuth');

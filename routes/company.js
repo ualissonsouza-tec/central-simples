@@ -2,14 +2,9 @@
 // Perfil de empresa completamente isolado por usuário.
 // Cada usuário tem seu próprio registro — nunca vê dados de outro.
 
-// ============================================================================
 // ROTAS DE CONFIGURACOES DA EMPRESA
 // Mantem nome, logo, Pix e status de integracao WhatsApp por usuario.
-// ============================================================================
 
-// ----------------------------------------------------------------------------
-// 1. Imports e configuracao de upload
-// ----------------------------------------------------------------------------
 const express     = require('express');
 const multer      = require('multer');
 const path        = require('path');
@@ -46,9 +41,6 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-// ----------------------------------------------------------------------------
-// 2. Helpers de banco, usuario e validacao de imagem
-// ----------------------------------------------------------------------------
 function dbGet(sql, p=[]) {
   return new Promise((ok,er) => db.get(sql,p,(e,r)=>e?er(e):ok(r)));
 }
@@ -99,9 +91,6 @@ function logoFileToDataUrl(file) {
   return `data:${mime};base64,${buffer.toString('base64')}`;
 }
 
-// ----------------------------------------------------------------------------
-// 3. Rotas de leitura e gravacao do perfil da empresa
-// ----------------------------------------------------------------------------
 // ── GET /api/company/profile ──────────────────────────────────────────────────
 router.get('/profile', requireAuth, async (req, res) => {
   try {

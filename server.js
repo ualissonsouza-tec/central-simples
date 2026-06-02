@@ -1,21 +1,4 @@
-// server.js — Central Simples
-// ─────────────────────────────────────────────────────────────────────────────
-// Execute com: node server.js
-// ─────────────────────────────────────────────────────────────────────────────
-
-// ============================================================================
-// MAPA DE MANUTENCAO
-// 1. Ambiente e seguranca basica
-// 2. Banco e dependencias de rotas
-// 3. Middlewares globais
-// 4. Arquivos estaticos e paginas HTML
-// 5. APIs publicas e protegidas
-// 6. Tratamento de erro e inicializacao
-// ============================================================================
-
-// ----------------------------------------------------------------------------
-// 1. Ambiente e seguranca basica
-// ----------------------------------------------------------------------------
+// Central Simples API server.
 require('dotenv').config();
 
 const express      = require('express');
@@ -24,7 +7,6 @@ const jwt          = require('jsonwebtoken');
 const path         = require('path');
 const { isSameOrigin, publicError } = require('./lib/security');
 
-// ── Valida variáveis obrigatórias ─────────────────────────────────────────────
 ['MASTER_PASSWORD', 'JWT_SECRET'].forEach(k => {
   if (!process.env[k]) {
     console.error(`[ENV] Variável obrigatória ausente: ${k}`);
@@ -43,13 +25,8 @@ if (process.env.NODE_ENV === 'production') {
   }
 }
 
-// ----------------------------------------------------------------------------
-// 2. Banco e dependencias de rotas
-// ----------------------------------------------------------------------------
-// ── Banco de dados ────────────────────────────────────────────────────────────
 require('./db/database');
 
-// ── Middlewares ───────────────────────────────────────────────────────────────
 const requireAuth   = require('./middleware/requireAuth');
 const authRoutes    = require('./routes/auth');
 const companyRoutes = require('./routes/company');
@@ -65,9 +42,6 @@ const { startAutomationEngine } = require('./lib/automationEngine');
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
-// ----------------------------------------------------------------------------
-// 3. Middlewares globais do Express
-// ----------------------------------------------------------------------------
 app.disable('x-powered-by');
 if (process.env.NODE_ENV === 'production') {
   app.set('trust proxy', 1);
@@ -95,9 +69,6 @@ app.use((req, res, next) => {
   });
 });
 
-// ----------------------------------------------------------------------------
-// 4. Arquivos estaticos e paginas HTML
-// ----------------------------------------------------------------------------
 // Rotas HTML protegidas precisam vir antes do express.static. Caso contrario,
 // dashboard.html e orcamentos.html poderiam ser entregues sem requireAuth.
 
@@ -133,14 +104,9 @@ app.use('/uploads', requireAuth, express.static(path.join(__dirname, 'uploads'),
   redirect: false,
 }));
 
-// ----------------------------------------------------------------------------
-// 5. APIs publicas e protegidas
-// ----------------------------------------------------------------------------
-// ── API PÚBLICA ───────────────────────────────────────────────────────────────
 app.use('/api', authRoutes);
 app.use('/api/public/orcamentos', publicOrcRoutes);
 
-// ── API /me — retorna dados do usuário logado (para exibir nome no dashboard) ─
 app.get('/api/me', requireAuth, async (req, res) => {
   const billing = await getBillingStatusForUserId(req.user?.userId ?? null);
   res.json({
@@ -152,7 +118,6 @@ app.get('/api/me', requireAuth, async (req, res) => {
   });
 });
 
-// ── API PROTEGIDAS ────────────────────────────────────────────────────────────
 app.use('/api/company',    companyRoutes);
 app.use('/api/orcamentos', orcRoutes);
 app.use('/api/clients',    clientRoutes);
@@ -160,12 +125,7 @@ app.use('/api/cobrancas-programadas', scheduledChargeRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/billing', billingRoutes);
 
-// ----------------------------------------------------------------------------
-// 6. Fallback, erro global e inicializacao do servidor
-// ----------------------------------------------------------------------------
-// ── CATCH-ALL ─────────────────────────────────────────────────────────────────
-// Rotas de API inexistentes retornam 404 JSON (não redireciona)
-// Tudo o mais redireciona para o dashboard
+// Keep HTML navigation on the dashboard while returning JSON for API misses.
 app.use((req, res) => {
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({ success: false, message: 'Rota não encontrada.' });
@@ -173,21 +133,13 @@ app.use((req, res) => {
   res.redirect('/dashboard.html');
 });
 
-// ── ERRO GLOBAL ───────────────────────────────────────────────────────────────
 app.use((err, req, res, _next) => {
   console.error('[ERRO]', err.message);
   res.status(err.status || 500).json({ success: false, message: publicError(err) });
 });
 
-// ── INICIAR ───────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log('');
-  console.log('  ╔══════════════════════════════════════╗');
-  console.log('  ║       Central Simples v2.0           ║');
-  console.log('  ╠══════════════════════════════════════╣');
-  console.log(`  ║  http://localhost:${PORT}               ║`);
-  console.log('  ╚══════════════════════════════════════╝');
-  console.log('');
+  console.log(`[APP] Central Simples listening on http://localhost:${PORT}`);
 });
 
 startAutomationEngine();

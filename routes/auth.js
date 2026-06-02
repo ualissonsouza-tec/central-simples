@@ -1,11 +1,6 @@
-// ============================================================================
 // ROTAS DE AUTENTICACAO
 // Login, cadastro, recuperacao de senha, cookies de sessao e logout.
-// ============================================================================
 
-// ----------------------------------------------------------------------------
-// 1. Imports e dependencias
-// ----------------------------------------------------------------------------
 const crypto = require('crypto');
 const express = require('express');
 const jwt = require('jsonwebtoken');
@@ -23,9 +18,6 @@ const {
 
 const router = express.Router();
 
-// ----------------------------------------------------------------------------
-// 2. Helpers de banco, seguranca e sessao
-// ----------------------------------------------------------------------------
 function newResetToken() {
   return crypto.randomBytes(32).toString('base64url');
 }
@@ -89,9 +81,6 @@ function genericRecoveryResponse(res) {
   });
 }
 
-// ----------------------------------------------------------------------------
-// 3. Login
-// ----------------------------------------------------------------------------
 router.post('/login', async (req, res) => {
   const username = String(req.body.username || '').trim();
   const password = String(req.body.password || '');
@@ -161,9 +150,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// ----------------------------------------------------------------------------
-// 4. Cadastro de usuario com CPF/CNPJ e limites anti-abuso
-// ----------------------------------------------------------------------------
 router.post('/register', async (req, res) => {
   const username = String(req.body.username || '').trim();
   const email = String(req.body.email || '').trim().toLowerCase();
@@ -285,9 +271,6 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// ----------------------------------------------------------------------------
-// 5. Recuperacao e redefinicao de senha
-// ----------------------------------------------------------------------------
 router.post('/forgot-password', async (req, res) => {
   const email = String(req.body.email || '').trim().toLowerCase();
 
@@ -394,9 +377,6 @@ router.post('/reset-password', async (req, res) => {
   }
 });
 
-// ----------------------------------------------------------------------------
-// 6. Logout
-// ----------------------------------------------------------------------------
 router.post('/logout', (req, res) => {
   res.clearCookie('cs_token', {
     httpOnly: true,

@@ -1,7 +1,5 @@
-// ============================================================================
 // BANCO DE DADOS - POSTGRESQL/NEON
 // Adaptador compatível com a API usada hoje pelo SQLite: get, all e run.
-// ============================================================================
 
 const { Pool, types } = require('pg');
 

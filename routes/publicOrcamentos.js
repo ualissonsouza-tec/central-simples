@@ -1,10 +1,8 @@
 ﻿const express = require('express');
 const fs = require('fs');
 const path = require('path');
-// ============================================================================
 // ROTAS PÚBLICAS DE ORÇAMENTO
 // Permite cliente abrir PDF e aprovar/recusar pelo link sem login.
-// ============================================================================
 
 const db = require('../db/database');
 const { renderOrcamentoPdf } = require('../lib/orcamentoPdf');

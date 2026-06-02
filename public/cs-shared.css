@@ -1,14 +1,4 @@
-/* cs-shared.css — Design System Central Simples
-   Mesmo visual da tela de login em todas as páginas
-   ================================================================ */
 
-/* ============================================================================
-   MAPA DE MANUTENCAO
-   1. Tokens globais e base
-   2. Sidebar, logo e navegacao
-   3. Componentes comuns: botoes, cards, tabelas, modais e toast
-   4. Layout mobile e responsividade compartilhada
-   ============================================================================ */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -43,7 +33,6 @@ html, body {
   overflow-x: hidden;
 }
 
-/* ── SIDEBAR ──────────────────────────────────────────────────────── */
 .app { display: flex; min-height: 100vh; }
 
 .sidebar {
@@ -60,7 +49,6 @@ html, body {
   overflow: hidden;
 }
 
-/* Grade de quadrados — mesmo padrão do lado esquerdo do login */
 .sidebar::before {
   content: '';
   position: absolute;
@@ -73,7 +61,6 @@ html, body {
   z-index: 0;
 }
 
-/* Círculo de luz no canto superior — igual ao login */
 .sidebar::after {
   content: '';
   position: absolute;
@@ -85,7 +72,6 @@ html, body {
   z-index: 0;
 }
 
-/* Todo conteúdo da sidebar fica acima do padrão decorativo */
 .sidebar > * { position: relative; z-index: 1; }
 
 .sidebar-logo {
@@ -166,7 +152,6 @@ html, body {
   95% { transform: scaleY(.1); }
 }
 
-/* Logo SVG moderna */
 .logo-mark {
   width: 40px; height: 40px;
   flex-shrink: 0;
@@ -214,7 +199,6 @@ html, body {
   display: none;
 }
 
-/* ── MAIN CONTENT ─────────────────────────────────────────────────── */
 .main {
   margin-left: 248px;
   flex: 1;
@@ -228,7 +212,6 @@ html, body {
 .page-header h1 { font-family: 'DM Serif Display', serif; font-size: 1.9rem; color: #fff; letter-spacing: -.5px; }
 .page-header p  { font-size: 0.875rem; color: var(--muted); margin-top: 6px; }
 
-/* ── CARDS ────────────────────────────────────────────────────────── */
 .card {
   background: var(--navy-2);
   border: 1px solid var(--border);
@@ -248,7 +231,6 @@ html, body {
   border-bottom: 1px solid var(--border);
 }
 
-/* KPI cards */
 .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.75rem; }
 
 .kpi-card {
@@ -315,7 +297,6 @@ html, body {
   pointer-events: none;
 }
 
-/* ── FIELDS ───────────────────────────────────────────────────────── */
 .field { margin-bottom: 1.15rem; }
 .field label {
   display: block;
@@ -350,7 +331,6 @@ html, body {
   box-shadow: 0 0 0 3px rgba(59,130,246,.15);
 }
 
-/* ── BUTTONS ──────────────────────────────────────────────────────── */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -381,7 +361,6 @@ html, body {
 .btn-danger { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3); color: #f87171; }
 .btn-danger:hover { background: rgba(239,68,68,.18); }
 
-/* ── TABLE ────────────────────────────────────────────────────────── */
 .table-wrap {
   background: var(--navy-2);
   border: 1px solid var(--border);
@@ -416,7 +395,6 @@ tbody td { padding: 13px 16px; color: var(--text); border-bottom: 1px solid rgba
 tbody tr:last-child td { border-bottom: none; }
 tbody tr:hover td { background: rgba(255,255,255,.025); }
 
-/* ── STATUS BADGES ────────────────────────────────────────────────── */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -436,7 +414,6 @@ tbody tr:hover td { background: rgba(255,255,255,.025); }
 .badge-red    { background: rgba(248,113,113,.1);  color: #f87171; }
 .badge-gray   { background: rgba(148,163,184,.1);  color: #94a3b8; }
 
-/* ── TOAST ────────────────────────────────────────────────────────── */
 .toast {
   position: fixed;
   bottom: 1.5rem;
@@ -463,7 +440,6 @@ tbody tr:hover td { background: rgba(255,255,255,.025); }
 .toast.error   .dot { background: var(--error); }
 .toast.info    .dot { background: var(--sky); }
 
-/* ── MODAL ────────────────────────────────────────────────────────── */
 .modal-overlay {
   position: fixed; inset: 0; z-index: 100;
   background: rgba(0,0,0,.65);
@@ -565,7 +541,6 @@ tbody tr:hover td { background: rgba(255,255,255,.025); }
   }
 }
 
-/* ── DRAG & DROP ──────────────────────────────────────────────────── */
 .drop-zone {
   border: 1.5px dashed rgba(37,99,235,.35);
   border-radius: 10px;
@@ -580,7 +555,6 @@ tbody tr:hover td { background: rgba(255,255,255,.025); }
 .drop-zone p strong { color: var(--blue-lt); }
 .drop-zone small { font-size: 0.72rem; color: rgba(148,163,184,.5); }
 
-/* ── ITEM ROWS (itens do orçamento) ───────────────────────────────── */
 .item-row {
   display: grid;
   grid-template-columns: 1fr 80px 110px 32px;
@@ -620,7 +594,6 @@ tbody tr:hover td { background: rgba(255,255,255,.025); }
 }
 .btn-del-item:hover { background: rgba(248,113,113,.15); }
 
-/* ── TOTAL BAR ────────────────────────────────────────────────────── */
 .total-bar {
   display: flex;
   align-items: center;
@@ -634,24 +607,20 @@ tbody tr:hover td { background: rgba(255,255,255,.025); }
 .total-bar .label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
 .total-bar .value { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--sky); }
 
-/* ── GRID UTILS ───────────────────────────────────────────────────── */
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
 
-/* ── SCROLLBAR ────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.2); }
 
-/* ── ANIMAÇÕES ────────────────────────────────────────────────────── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 .fade-up { animation: fadeUp .4s ease both; }
 
-/* ── GUARD OVERLAY ────────────────────────────────────────────────── */
 .guard-overlay {
   position: fixed; inset: 0; z-index: 999;
   background: var(--navy);

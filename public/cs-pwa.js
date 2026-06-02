@@ -1,14 +1,9 @@
-// ============================================================================
 // PWA E UI COMPARTILHADA
 // Service worker, instalacao do app, push, mascaras e modal de confirmacao.
-// ============================================================================
 
 (function setupCentralSimplesPwa() {
   let deferredInstallPrompt = null;
 
-  // --------------------------------------------------------------------------
-  // 1. Inicializacao e service worker
-  // --------------------------------------------------------------------------
   function ready(fn) {
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', fn);
@@ -41,9 +36,6 @@
     return outputArray;
   }
 
-  // --------------------------------------------------------------------------
-  // 2. Botao de instalacao do PWA
-  // --------------------------------------------------------------------------
   function ensureInstallButton() {
     if (isStandalone() || document.getElementById('pwa-install-button')) return;
 
@@ -78,9 +70,6 @@
     document.body.appendChild(button);
   }
 
-  // --------------------------------------------------------------------------
-  // 3. Mascaras reutilizaveis de formularios
-  // --------------------------------------------------------------------------
   function onlyDigits(value) {
     return String(value || '').replace(/\D/g, '');
   }
@@ -154,9 +143,6 @@
     });
   }
 
-  // --------------------------------------------------------------------------
-  // 4. Modal visual de confirmacao
-  // --------------------------------------------------------------------------
   function ensureConfirmModal() {
     let overlay = document.getElementById('cs-confirm-overlay');
     if (overlay) return overlay;
@@ -227,9 +213,6 @@
     });
   }
 
-  // --------------------------------------------------------------------------
-  // 5. Eventos globais de instalacao
-  // --------------------------------------------------------------------------
   window.addEventListener('beforeinstallprompt', (event) => {
     event.preventDefault();
     deferredInstallPrompt = event;
@@ -243,9 +226,6 @@
     if (button) button.style.display = 'none';
   });
 
-  // --------------------------------------------------------------------------
-  // 6. API global usada pelas paginas
-  // --------------------------------------------------------------------------
   window.CentralSimplesPwa = {
     async requestNotificationPermission() {
       if (!('Notification' in window)) return 'unsupported';

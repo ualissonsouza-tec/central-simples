@@ -14,13 +14,6 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/cs-shared.css" />
   <style>
-    /* ==========================================================================
-       PAGAMENTO - CSS LOCAL
-       1. Layout do checkout
-       2. Resumo do plano
-       3. Formas de pagamento e dados do pagador
-       4. Mobile
-       ========================================================================== */
 
     body {
       min-height: 100vh;
@@ -377,12 +370,6 @@
   </style>
 </head>
 <body>
-  <!-- =========================================================================
-       PAGAMENTO - HTML
-       1. Topbar
-       2. Resumo do plano escolhido
-       3. Formulario de pagamento
-       ========================================================================= -->
   <main class="checkout-shell">
     <div class="checkout-topbar">
       <a class="checkout-logo" href="/dashboard.html">
@@ -514,12 +501,7 @@
   <div class="toast" id="toast"><span id="toast-msg"></span></div>
 
   <script>
-    // =========================================================================
     // PAGAMENTO - JS
-    // 1. Carrega plano selecionado
-    // 2. Alterna forma de pagamento
-    // 3. Envia checkout para o backend
-    // =========================================================================
 
     let _selectedPlan = null;
 

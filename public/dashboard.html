@@ -15,13 +15,6 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/cs-shared.css" />
   <style>
-    /* ==========================================================================
-       DASHBOARD - CSS LOCAL
-       1. KPIs e agenda do dinheiro
-       2. Notificacoes e onboarding
-       3. Resumo mobile "Hoje"
-       4. Tabelas, cards e responsividade
-       ========================================================================== */
 
     .summary-grid {
       display: grid;
@@ -900,13 +893,6 @@
   </style>
 </head>
 <body>
-  <!-- =========================================================================
-       DASHBOARD - HTML
-       1. Guard de autenticacao
-       2. Sidebar desktop/mobile
-       3. Topbar, notificacoes, onboarding e resumo
-       4. Paineis operacionais, tabela e modais
-       ========================================================================= -->
   <div class="guard-overlay" id="guard">
     <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
       <div class="spinner"></div>
@@ -1157,18 +1143,8 @@
   </div>
 
   <script>
-    // =========================================================================
     // DASHBOARD - JS
-    // 1. Estado global e inicializacao
-    // 2. Helpers de data, texto e regras de negocio
-    // 3. Carregamento de dados e renderizacao
-    // 4. Notificacoes e acoes do usuario
-    // 5. Mensagens WhatsApp e automacoes manuais
-    // =========================================================================
 
-    // -------------------------------------------------------------------------
-    // 1. Estado global e constantes
-    // -------------------------------------------------------------------------
     let _orcs = [];
     let _clients = [];
     let _scheduledCharges = [];
@@ -1187,9 +1163,6 @@
       Pago: 'badge-blue'
     };
 
-    // -------------------------------------------------------------------------
-    // 2. Inicializacao, autenticacao e logout
-    // -------------------------------------------------------------------------
     function preencherUsuarioMobile(nome) {
       const el = document.getElementById('mobile-nome-usuario');
       if (el) el.textContent = nome || 'usuário';
@@ -1243,9 +1216,6 @@
       if (event.target.id === 'charge-whatsapp-modal') cancelarCobrancaWhatsapp();
     });
 
-    // -------------------------------------------------------------------------
-    // 3. Helpers de UI, texto, datas e regras de negocio
-    // -------------------------------------------------------------------------
     function toast(msg, type = 'success') {
       const t = document.getElementById('toast');
       document.getElementById('toast-msg').textContent = msg;
@@ -1410,9 +1380,6 @@
       return _orcs.find((item) => Number(item.id) === Number(id));
     }
 
-    // -------------------------------------------------------------------------
-    // 4. Carregamento e renderizacao principal
-    // -------------------------------------------------------------------------
     async function carregarDados() {
       const [orcRes, clientRes, scheduledRes] = await Promise.all([
         fetch('/api/orcamentos', { credentials: 'same-origin' }),
@@ -1562,9 +1529,6 @@
       `;
     }
 
-    // -------------------------------------------------------------------------
-    // 5. Notificacoes do sino e push no celular
-    // -------------------------------------------------------------------------
     async function carregarNotificacoes(silent = false) {
       try {
         const res = await fetch('/api/notifications?limit=100', { credentials: 'same-origin' });
@@ -1765,9 +1729,6 @@
       toast('Permissão de avisos não ativada.', 'info');
     }
 
-    // -------------------------------------------------------------------------
-    // 6. KPIs, agenda do dinheiro, agenda do dia e tabela
-    // -------------------------------------------------------------------------
     function renderResumo() {
       const ativos = _orcs.filter((item) => item.status !== 'Recusado');
       const totalCarteira = ativos.reduce((sum, item) => sum + (Number(item.total_value) || 0), 0);
@@ -2084,9 +2045,6 @@
       `).join('');
     }
 
-    // -------------------------------------------------------------------------
-    // 7. Links, WhatsApp e execucao das acoes operacionais
-    // -------------------------------------------------------------------------
     async function obterLinks(id, markSent = false) {
       const res = await fetch(`/api/orcamentos/${id}/share-links`, {
         method: 'POST',

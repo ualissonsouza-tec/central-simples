@@ -15,13 +15,6 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/cs-shared.css" />
   <style>
-    /* ==========================================================================
-       ORCAMENTOS - CSS LOCAL
-       1. Pastas de funcionalidades e janelas
-       2. Modal de novo orcamento
-       3. Pipeline, agenda, modelos e historico
-       4. Ajustes responsivos para mobile
-       ========================================================================== */
 
     .page-toolbar {
       display: flex;
@@ -967,13 +960,6 @@
   </style>
 </head>
 <body>
-  <!-- =========================================================================
-       ORCAMENTOS - HTML
-       1. Modal principal do orcamento
-       2. Janelas de funcionalidades
-       3. Sidebar e cabecalho
-       4. Pastas: PDF, calculadora, automacoes, modelos, cobrancas e historico
-       ========================================================================= -->
   <div class="guard-overlay" id="guard">
     <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
       <div class="spinner"></div>
@@ -1743,18 +1729,8 @@
   </div>
 
   <script>
-    // =========================================================================
     // ORCAMENTOS - JS
-    // 1. Estado global, constantes e permissoes
-    // 2. Janelas/pastas de funcionalidades
-    // 3. Carregamento de dados e renderizacao
-    // 4. Historico, cobrancas programadas e pipeline
-    // 5. Modal de orcamento, salvar, enviar e excluir
-    // =========================================================================
 
-    // -------------------------------------------------------------------------
-    // 1. Modelos base, constantes, estado global e permissoes
-    // -------------------------------------------------------------------------
     const BASE_TEMPLATES = [
       {
         id: 'builtin-pedreiro-semanal',
@@ -1937,9 +1913,6 @@
       whatsapp_auto_ready: false
     };
 
-    // -------------------------------------------------------------------------
-    // 2. Plano ativo, janelas de funcionalidades e inicializacao
-    // -------------------------------------------------------------------------
     function preencherUsuarioMobile(nome) {
       const el = document.getElementById('mobile-nome-usuario');
       if (el) el.textContent = nome || 'usuário';
@@ -2115,9 +2088,6 @@
       window.location.href = '/login.html';
     });
 
-    // -------------------------------------------------------------------------
-    // 3. Helpers de UI, datas, valores, listas e regras de negocio
-    // -------------------------------------------------------------------------
     function toast(msg, type = 'success') {
       const t = document.getElementById('toast');
       document.getElementById('toast-msg').textContent = msg;
@@ -2346,9 +2316,6 @@
       return badges;
     }
 
-    // -------------------------------------------------------------------------
-    // 4. Carregamento de dados e renderizacao geral da tela
-    // -------------------------------------------------------------------------
     async function carregarBase() {
       const [orcRes, templateRes, clientRes, scheduledRes] = await Promise.all([
         fetch('/api/orcamentos', { credentials: 'same-origin' }),
@@ -2687,9 +2654,6 @@
       select.onchange = renderClientHistoryPreview;
     }
 
-    // -------------------------------------------------------------------------
-    // 5. Historico completo e insights do cliente
-    // -------------------------------------------------------------------------
     function renderClientHistoryPreview() {
       const container = document.getElementById('client-history-preview');
       const select = document.getElementById('client-history-select');
@@ -2885,9 +2849,6 @@
       atualizarCamposCobrancaProgramada();
     }
 
-    // -------------------------------------------------------------------------
-    // 6. Cobrancas programadas por cliente
-    // -------------------------------------------------------------------------
     function renderScheduledCharges() {
       const container = document.getElementById('scheduled-charge-list');
       if (!billingHas('scheduled_charges')) {
@@ -3074,9 +3035,6 @@
       });
     }
 
-    // -------------------------------------------------------------------------
-    // 7. Pipeline e tabela de orcamentos
-    // -------------------------------------------------------------------------
     function renderTabela() {
       const rows = getFilteredOrcs();
       document.getElementById('counter').textContent = `${rows.length} de ${_orcs.length} orçamentos`;
@@ -3166,9 +3124,6 @@
       }
     }
 
-    // -------------------------------------------------------------------------
-    // 8. Modal de orcamento: etapas, campos, itens e checklist
-    // -------------------------------------------------------------------------
     const MODAL_STEPS = ['pdf', 'servico', 'valores', 'notas'];
     let _modalStep = 'pdf';
 
@@ -3503,9 +3458,6 @@
       };
     }
 
-    // -------------------------------------------------------------------------
-    // 9. Salvar, enviar pelo WhatsApp, gerar recorrencia e excluir
-    // -------------------------------------------------------------------------
     async function salvarOrcamento(options = {}) {
       const payload = preencherPayload();
 
